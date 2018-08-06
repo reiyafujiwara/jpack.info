@@ -12,8 +12,6 @@
        
 
 		<!-- Styles -->
-		<link rel="stylesheet" href="/public/css/base.css">
-        <link rel="stylesheet" href="/public/style.css">
        
        
     </head>
@@ -55,9 +53,11 @@
          <dl class="center-block service-list-light max800">
 		<dt>パソコンを新品のように高速化！</dt>
 			<h4 class="center-block max800 download">
-				ソフトウェアのダウンロードは<a href="{{ siteUrl('/download/SystemMechanic_14.0.3.84.exe') }}" style="color:red; font-weight:bold;">こちら</a>から<br />
+				ソフトウェアのダウンロードは<a href="https://jpack.info/download/SystemMechanic_14.0.3.84.exe" style="color:red; font-weight:bold;">こちら</a>から<br />
+				<!-- 元ファイルリンクを指定するとエラーになるので除外-->
 				<span style="font-size:0.8em;">※ インストール時に必要なシリアル番号は書面にて配布しているＩＤを入力してください。<br />
-		※ 動作環境は<a href="{{ siteUrl('/terms') }}">利用規約</a>をご確認下さい。
+		※ 動作環境は<a href="">利用規約</a>をご確認下さい。
+		<!-- 元ファイルリンクを指定するとエラーになるので除外-->
 		</span>
 			</h4>
 		<dd>

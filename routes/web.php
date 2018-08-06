@@ -25,14 +25,24 @@ Route::get('/', function () {
 });
 
 // 申し込みページ
-Route::get('/contact', function () {
-    return view('contact');
-});
+# 入力画面
+Route::get('contact/', [
+    'uses' => 'EntryController@create',
+    'as' => 'entryform.entryform'
+  ]);
+   
+# 確認画面
+Route::post('contact/confirm', [
+    'uses' => 'EntryController@confirｍ',
+    'as' => 'entryform.confirm'
+  ]);
 
-// 申し込み完了ページ
-Route::get('/thanks', function() {
-    return view('thanks');
-});
+# サンクスページ
+Route::post('contact/confirm/thanks', [
+    'uses' => 'EntryController@store',
+    'as' => 'entryform.thanks'
+  ]);
+
 
 // サービス紹介ページ
 Route::get('/service', function() {
@@ -43,6 +53,13 @@ Route::get('/service', function() {
 Route::get('/asct', function() {
     return view('asct');
 });
+
+
+
+
+
+
+
 
 
 // // 申し込みページ

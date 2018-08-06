@@ -13,10 +13,11 @@
 		<link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
 		<link rel="stylesheet" href="/css/style.css">
 		<link rel="stylesheet" href="/css/featherlight.min.css">
-    		<script src="/js/jquery.min.js"></script>
-		<script src="/js/bootstrap/bootstrap.min.js"></script>	
-		<script src="/js/featherlight.min.js"></script>
-		<script src="/js/common.js"></script>
+		<link href="/css/entryform.css" rel="stylesheet">
+    		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap/bootstrap.min.js"></script>	
+		<script src="js/featherlight.min.js"></script>
+		<script src="js/common.js"></script>
                 <script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
         
     </head>

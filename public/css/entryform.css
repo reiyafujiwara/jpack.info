@@ -1,0 +1,26 @@
+.errors {	
+    border: solid 2px #ad0000;
+    background-color: #EFDFDF;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.entry_status {
+    padding:20px;
+    font-size: 20px;
+}
+
+
+.confirm_message{
+    border:solid 2px #008000;
+    background-color:hsl(133, 100%, 94%);
+    line-height: 2rem;
+}
+
+.row{
+    margin-bottom:20px;
+}
+
+.thanks-msg{
+
+}
