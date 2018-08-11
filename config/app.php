@@ -160,6 +160,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // Forrest is SalesForce REST API Library
+        Omniphx\Forrest\Providers\Laravel\ForrestServiceProvider::class,
+
     ],
 
     /*
@@ -208,6 +211,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Forrest' => Omniphx\Forrest\Providers\Laravel\Facades\Forrest::class,
 
     ],
 

@@ -20,7 +20,7 @@
 			
 			@if ($errors->any())
 				<div class="errors col-xs-8 col-xs-offset-2">
-					<h3>‼️入力エラー</h3>
+					<h3>入力エラー</h3>
 					<p>
 						下記項目にて、入力内容もしくは入力形式が正しくありません。<br>
 						入力内容をご確認頂き、再度ご入力をお願い致します。
@@ -273,15 +273,15 @@
 					<div class="col-xs-2">
 							<select name="expiration_date_month" class="form-control">
 								<option value="" selected="selected">未選択</option>
-								<option value="01" @if(old('expiration_date_month')=='01') selected @endif>1</option>
-								<option value="02" @if(old('expiration_date_month')=='02') selected @endif>2</option>
-								<option value="03" @if(old('expiration_date_month')=='03') selected @endif>3</option>
-								<option value="04" @if(old('expiration_date_month')=='04') selected @endif>4</option>
-								<option value="05" @if(old('expiration_date_month')=='05') selected @endif>5</option>
-								<option value="06" @if(old('expiration_date_month')=='06') selected @endif>6</option>
-								<option value="07" @if(old('expiration_date_month')=='07') selected @endif>7</option>
-								<option value="08" @if(old('expiration_date_month')=='08') selected @endif>8</option>
-								<option value="09" @if(old('expiration_date_month')=='09') selected @endif>9</option>
+								<option value="01" @if(old('expiration_date_month')=='01') selected @endif>01</option>
+								<option value="02" @if(old('expiration_date_month')=='02') selected @endif>02</option>
+								<option value="03" @if(old('expiration_date_month')=='03') selected @endif>03</option>
+								<option value="04" @if(old('expiration_date_month')=='04') selected @endif>04</option>
+								<option value="05" @if(old('expiration_date_month')=='05') selected @endif>05</option>
+								<option value="06" @if(old('expiration_date_month')=='06') selected @endif>06</option>
+								<option value="07" @if(old('expiration_date_month')=='07') selected @endif>07</option>
+								<option value="08" @if(old('expiration_date_month')=='08') selected @endif>08</option>
+								<option value="09" @if(old('expiration_date_month')=='09') selected @endif>09</option>
 								<option value="10" @if(old('expiration_date_month')=='10') selected @endif>10</option>
 								<option value="11" @if(old('expiration_date_month')=='11') selected @endif>11</option>
 								<option value="12" @if(old('expiration_date_month')=='12') selected @endif>12</option>
@@ -293,17 +293,17 @@
 					<div class="col-xs-2">
 					   <select name="expiration_date_year" class="form-control">
 							<option value="" selected="selected">未選択</option>
-							<option value="2028" @if(old('expiration_date_year')=='2028') selected @endif>2028</option>
-							<option value="2027" @if(old('expiration_date_year')=='2027') selected @endif>2027</option>
-							<option value="2026" @if(old('expiration_date_year')=='2026') selected @endif>2026</option>
-							<option value="2025" @if(old('expiration_date_year')=='2025') selected @endif>2025</option>
-							<option value="2024" @if(old('expiration_date_year')=='2024') selected @endif>2024</option>
-							<option value="2023" @if(old('expiration_date_year')=='2023') selected @endif>2023</option>
-							<option value="2022" @if(old('expiration_date_year')=='2022') selected @endif>2022</option>
-							<option value="2021" @if(old('expiration_date_year')=='2021') selected @endif>2021</option>
-							<option value="2020" @if(old('expiration_date_year')=='2020') selected @endif>2020</option>
-							<option value="2019" @if(old('expiration_date_year')=='2019') selected @endif>2019</option>
-							<option value="2018" @if(old('expiration_date_year')=='2018') selected @endif>2018</option>
+							<option value="28" @if(old('expiration_date_year')=='28') selected @endif>28</option>
+							<option value="27" @if(old('expiration_date_year')=='27') selected @endif>27</option>
+							<option value="26" @if(old('expiration_date_year')=='26') selected @endif>26</option>
+							<option value="25" @if(old('expiration_date_year')=='25') selected @endif>25</option>
+							<option value="24" @if(old('expiration_date_year')=='24') selected @endif>24</option>
+							<option value="23" @if(old('expiration_date_year')=='23') selected @endif>23</option>
+							<option value="22" @if(old('expiration_date_year')=='22') selected @endif>22</option>
+							<option value="21" @if(old('expiration_date_year')=='21') selected @endif>21</option>
+							<option value="20" @if(old('expiration_date_year')=='20') selected @endif>20</option>
+							<option value="19" @if(old('expiration_date_year')=='19') selected @endif>19</option>
+							<option value="18" @if(old('expiration_date_year')=='18') selected @endif>18</option>
 						</select>
 					</div>
 					<div class="col-xs-1 padding-none form-lavel-position">

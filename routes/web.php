@@ -33,9 +33,10 @@ Route::get('contact/', [
    
 # 確認画面
 Route::post('contact/confirm', [
-    'uses' => 'EntryController@confirｍ',
+    'uses' => 'EntryController@confirm',
     'as' => 'entryform.confirm'
   ]);
+
 
 # サンクスページ
 Route::post('contact/confirm/thanks', [
