@@ -7,6 +7,8 @@ use App\Http\Requests\EntryRequest;
 use App\Http\Services\EntryService;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Forrest;
+
 
 class EntryController extends Controller
 {
@@ -145,17 +147,22 @@ class EntryController extends Controller
             ->withInput($request->except(['action', 'Jボックス']));
         }
 
+
+
         // SF：顧客作成
         // account contract payment delivery
         $params = $this->entryService->generateSfParams($request->all());
-
-        // $account        = $this->entryService->createSfAccount($params['account']);
-        // // SF：取引先から取引先責任者のIDの取得
+        //dd($params); 処理確認OK
+        $account        = $this->entryService->createSfAccount($params['account']);
+        //dd($account);
+        //8/11 Salesforce response error
         
-        // $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
-        // GMO：会員登録用パラメータ作成
+        // SF：取引先から取引先責任者のIDの取得
+        $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
+
+        //GMO：会員登録用パラメータ作成
         $member_param   = $this->entryService->generateSaveMemberParam($params['payment']['CreditOwnerName__c']);
-        dd($member_param);
+
         // GMO：会員登録
         $member_id      = $this->entryService->gmoSaveMember($member_param);
         if($member_id !== false){

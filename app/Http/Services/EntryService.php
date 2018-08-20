@@ -25,9 +25,9 @@ class EntryService
             'JobCd'     => 'CHECK' //有効性チェック
 
         ];
-
         return $param;
     }
+
     public function generateExecParam(array $data,  $param) {
         $execParam = [
             'AccessID'      => $param['AccessID'],
@@ -37,8 +37,8 @@ class EntryService
             'OrderID'       => $param['OrderID']
         ];
         return $execParam;
-
     }
+
     public function generateSaveMemberParam($data,$name) {
         // dd($contact_id,$params );
         $execParam = [
@@ -47,9 +47,9 @@ class EntryService
             'MemberID'  => $data['OredrID'],
             'MemberName'  => $name
         ];
-        dd($execParam);
         return $execParam;
     }
+    
     public function generateSaveCardParam($member_id,$params) {
         // dd($contact_id,$params );
         $execParam = [
@@ -61,6 +61,7 @@ class EntryService
             'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
             'HolderName'    => $data['credit_name'],
         ];
+ 
         return $execParam;
     }
 
@@ -69,7 +70,6 @@ class EntryService
      *
      */
     public function gmoEntry(array $param){
-        //$url = env('GMO_URL').'/payment/EntryTran.idPass';
         $url = env('GMO_URL').'/payment/EntryTran.idPass';
         $client = new Client();
         // guzzleの送信処理 データは'form_params'というキー名(guzzleの仕様)
@@ -124,138 +124,108 @@ class EntryService
         return $param;
     }
 
-    public function generateSfParams(array $params){
-        // initialize
+    public function generateSfParams(array $body){
         $account = $ownServices = [];
         /*
-         * 取引先、契約、決済方法、配送
+         * 取引先(顧客情報),自社サービス登録内容
          */
-        $account = [
-            //"LastName"          => $body["LastName"],
-            "LastName"          => $params['name1'],
-            "FirstName"         => $params['name2'],
-            "Furigana__c"       => $params['kana1'].' '.$params['kana2'],
-            "LastnameKana__c"   => $params['kana1'],
-            "FirstnameKana__c"  => $params['kana2'],
-            "Phone1__c"         => $params['tel'],
-            // "Phone2__c"         => $Phone2__c"], 電話番号一つしか打ち込まないため
-            "PostalCode_del__c" => $params['zipcode1'].$params['zipcode2'],
-            "Address__c"        => $params['address1'].$params['address2'].$params['address3'],
-            "PersonBirthdate"   => $params['birthday_year'].$params['birthday_month'].$params['birthday_day'],
-            "Sex__c"            => $params['sex'],
+
+         $account = [
+            "LastName"          => $body['name1'],
+            "FirstName"         => $body['name2'],
+            "Furigana__c"       => $body['kana1'].' '.$body['kana2'],
+            "LastnameKana__c"   => $body['kana1'],
+            "FirstnameKana__c"  => $body['kana2'],
+            "Phone1__c"         => $body['tel'],
+            "PostalCode_del__c" => $body['zipcode1'].$body['zipcode2'],
+            "Address__c"        => $body['address1'].$body['address2'].$body['address3'],
+            "PersonBirthdate"   => $body['birthday_year'].$body['birthday_month'].$body['birthday_day'],
+            "Sex__c"            => $body['sex'],
             "PriorityContact__c"=> '電話①' 
-            // メールが入らない~.
-            //"PersonEmail"       => $body["PersonEmail"]
-        ];
+         ];
 
-        $ownServices = [
-            
-        ];
-
-
-
-
-    //     // $contract = [
-    //     //     "Plan__c"               => $body['Plan__c'],
-    //     //     "Status__c"             => "配送待ち",
-    //     //     "ContractClass__c"      => '個人',
-    //     //     "Norm__c"               => $body['Norm__c'],
-    //     // ];
-    //     // // 安心サービスが定義されており、かつ値がtrueの時
-    //     // if($body['SafeRegistration__c'] ){
-    //     //     $contract['SafeRegistration__c'] = $body['SafeRegistration__c'];
-    //     // }
-
-        $payment = [
-            "CreditCardNumber__c"   => $params["credit_num"],
-            "CreditLimitMonth__c"   => $params["expiration_date_month"],
-            "CreditLimitYear__c"    => $params["expiration_date_year"],
-            "CreditOwnerName__c"    => $params["credit_name"],
-        ];
-        return compact('account','ownServices','payment');
+         $ownService = [
+             'EntryDay__c' => date('Ymd'),
+             'OrderID__c' => ''
+         ];
+        return compact('account','ownServices');
 
         }
 
-
-
-    //     return compact('account','contract','payment','delivery');
-
-    // }
     /*
      * @description
      * @return account_id
      */
-    // public function createSfAccount($params){
-    //     Forrest::authenticate();
-    //     $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$params["name1"]."'AND Phone1__c='".$params["tel"]."'");
-    //     //dd($a); 結果　totalsize=>0 done =>true records =>[]
-    //     if($a['totalSize'] === 0){
-    //         $a = Forrest::sobjects('Account',[
-    //           'method' => 'post',
-    //           'params'   => $params
-    //         ]);
-    //         return $a;
-    //     }
-    //     return ['id' => $a['records'][0]['Id']];
-    // }
+    public function createSfAccount($body){
+        Forrest::authenticate();
+        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$body['LastName']."'AND Phone1__c='".$body['Phone1__c']."'");
+        if($a['totalSize'] === 0){
+            $a = Forrest::sobjects('Account',[
+              'method' => 'post',
+              'params'   => $body
+            ]);
+            return $a;
+        }
+        return ['id' => $a['records'][0]['Id']];
+    }
 
-    // public function getSfContactId($account_id){
-    //     Forrest::authenticate();
+    public function getSfContactId($account_id){
+        Forrest::authenticate();
 
-    //     $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
-    //     // 取引先責任者ID取得
-    //     $contact_id = $c['records'][0]['Id'];
-    //     return $contact_id;
+        $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
+        // 取引先責任者ID取得
+        $contact_id = $c['records'][0]['Id'];
+        return $contact_id;
 
-    // }
+    }
 
-    // public function createSfPayment($param){
-    //     Forrest::authenticate();
+    public function createSfPayment($param){
+        Forrest::authenticate();
 
-    //     $c = Forrest::sobjects('SimPaymentInfo__c',[
-    //             'method' => 'post',
-    //             'body'   => $param
-    //     ]);
-    //     // 取引先責任者ID取得
-    //     return $c;
-    // }
+        $c = Forrest::sobjects('SimPaymentInfo__c',[
+                'method' => 'post',
+                'body'   => $param
+        ]);
+        // 取引先責任者ID取得
+        return $c;
+    }
 
-    // public function createSfContract($param){
-    //     Forrest::authenticate();
+    public function createSfContract($param){
+        Forrest::authenticate();
 
-    //     $c = Forrest::sobjects('SimContract__c',[
-    //             'method' => 'post',
-    //             'body'   => $param
-    //     ]);
-    //     // 取引先責任者ID取得
-    //     return $c;
-    // }
+        $c = Forrest::sobjects('SimContract__c',[
+                'method' => 'post',
+                'body'   => $param
+        ]);
+        // 取引先責任者ID取得
+        return $c;
+    }
 
-    // public function createSfDelivery($param){
-    //     Forrest::authenticate();
+    public function createSfDelivery($param){
+        Forrest::authenticate();
 
-    //     $c = Forrest::sobjects('Delivery__c',[
-    //             'method' => 'post',
-    //             'body'   => $param
-    //     ]);
-    //     // 取引先責任者ID取得
-    //     return $c;
-    // }
+        $c = Forrest::sobjects('Delivery__c',[
+                'method' => 'post',
+                'body'   => $param
+        ]);
+        // 取引先責任者ID取得
+        return $c;
+    }
 
-    // /**
-    //  * sfのcontract情報を取得
-    //  * @param  [type] $sfparams [description]
-    //  * @return [type]           [description]
-    //  */
-    // public function getSfContract($sfparams){
-    //     Forrest::authenticate();
+    /**
+     * sfのcontract情報を取得
+     * @param  [type] $sfparams [description]
+     * @return [type]           [description]
+     */
+    public function getSfContract($sfparams){
+        Forrest::authenticate();
 
-    //     // 絞り込みがわからなかったので一旦全件取得
-    //     $c = Forrest::query("SELECT Id, Name FROM SimContract__c WHERE Id='".$sfparams['id']."'");
+        // 絞り込みがわからなかったので一旦全件取得
+        $c = Forrest::query("SELECT Id, Name FROM SimContract__c WHERE Id='".$sfparams['id']."'");
 
-    //     // 取引先責任者ID取得
-    //     return $c['records'][0];
-    // }
+        // 取引先責任者ID取得
+        return $c['records'][0];
+    }
 
     // public function sendMail($params, $sfcontract, $plan)
     // {
