@@ -38,7 +38,7 @@
 			<form action="{{route('entryform.confirm')}}" id="form" class="entry-form" method="post" role="form">
 				<input type="hidden" name="type" value="Jボックス">
 				<input type="hidden" name="confirming" value="{{ old('confirming', 'false') }}")>
-				{{-- <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"> --}}
+				<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 				<div class="form-group col-xs-12">
 					<div class="input text required">
 							<label class="mark-require" for="name">氏名</label>

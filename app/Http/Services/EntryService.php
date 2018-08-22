@@ -61,6 +61,7 @@ class EntryService
             'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
             'HolderName'    => $data['credit_name'],
         ];
+        dd($execParam);
  
         return $execParam;
     }
@@ -146,8 +147,10 @@ class EntryService
 
          $ownService = [
              'EntryDay__c' => date('Ymd'),
+             //どこから指定して入力？
              'OrderID__c' => ''
          ];
+
         return compact('account','ownServices');
 
         }
@@ -159,10 +162,15 @@ class EntryService
     public function createSfAccount($body){
         Forrest::authenticate();
         $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$body['LastName']."'AND Phone1__c='".$body['Phone1__c']."'");
+        
         if($a['totalSize'] === 0){
             $a = Forrest::sobjects('Account',[
               'method' => 'post',
-              'params'   => $body
+              'body'   => $body
+            //   'body'   => [
+            //     "LastName" => "藤原",
+            //     "Phone1__c" => "08011111111"
+            //   ]
             ]);
             return $a;
         }

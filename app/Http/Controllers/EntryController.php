@@ -154,8 +154,7 @@ class EntryController extends Controller
         $params = $this->entryService->generateSfParams($request->all());
         //dd($params); 処理確認OK
         $account        = $this->entryService->createSfAccount($params['account']);
-        //dd($account);
-        //8/11 Salesforce response error
+        // dd($account); salesforce response error
         
         // SF：取引先から取引先責任者のIDの取得
         $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
