@@ -25,10 +25,14 @@ class EntryService
             'JobCd'     => 'CHECK' //有効性チェック
 
         ];
+        //dd($param['OrderID']);
         return $param;
     }
 
     public function generateExecParam(array $data,  $param) {
+
+        //決済実行
+        //
         $execParam = [
             'AccessID'      => $param['AccessID'],
             'AccessPass'    => $param['AccessPass'],
@@ -36,6 +40,7 @@ class EntryService
             'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
             'OrderID'       => $param['OrderID']
         ];
+        //dd($execParam['OrderID']);
         return $execParam;
     }
 
@@ -47,6 +52,7 @@ class EntryService
             'MemberID'  => $data['OredrID'],
             'MemberName'  => $name
         ];
+        dd($execParam['MemberID']);
         return $execParam;
     }
     
@@ -140,12 +146,12 @@ class EntryService
             "Phone1__c"         => $body['tel'],
             "PostalCode_del__c" => $body['zipcode1'].$body['zipcode2'],
             "Address__c"        => $body['address1'].$body['address2'].$body['address3'],
-            "PersonBirthdate"   => $body['birthday_year'].$body['birthday_month'].$body['birthday_day'],
+            "PersonBirthdate"   => $body['birthday_year'].'-'.$body['birthday_month'].'-'.$body['birthday_day'],
             "Sex__c"            => $body['sex'],
             "PriorityContact__c"=> '電話①' 
          ];
 
-         $ownService = [
+         $OwnService = [
              'EntryDay__c' => date('Ymd'),
              //どこから指定して入力？
              'OrderID__c' => ''
@@ -162,37 +168,33 @@ class EntryService
     public function createSfAccount($body){
         Forrest::authenticate();
         $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$body['LastName']."'AND Phone1__c='".$body['Phone1__c']."'");
-        
+
         if($a['totalSize'] === 0){
             $a = Forrest::sobjects('Account',[
               'method' => 'post',
               'body'   => $body
-            //   'body'   => [
-            //     "LastName" => "藤原",
-            //     "Phone1__c" => "08011111111"
-            //   ]
             ]);
             return $a;
         }
         return ['id' => $a['records'][0]['Id']];
     }
 
-    public function getSfContactId($account_id){
+    // public function getSfContactId($account_id){
+    //     Forrest::authenticate();
+
+    //     $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
+    //     // 取引先責任者ID取得
+    //     $contact_id = $c['records'][0]['Id'];
+    //     return $contact_id;
+
+    // }
+
+    public function createSfOwnservice($param){
         Forrest::authenticate();
 
-        $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
-        // 取引先責任者ID取得
-        $contact_id = $c['records'][0]['Id'];
-        return $contact_id;
-
-    }
-
-    public function createSfPayment($param){
-        Forrest::authenticate();
-
-        $c = Forrest::sobjects('SimPaymentInfo__c',[
+        $c = Forrest::sobjects('OwnService__c',[
                 'method' => 'post',
-                'body'   => $param
+                'body'   => $Ownservice
         ]);
         // 取引先責任者ID取得
         return $c;
