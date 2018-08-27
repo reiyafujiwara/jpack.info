@@ -11,130 +11,9 @@ use Mail;
 use Carbon\Carbon;
 
 
-class EntryService 
+class SFEntryService 
 {
-
-    public function generateEntryParam() {
-
-        $OrderID = date('Ymd').str_random(8);
-        $Amount  = 2300;
-        $Tax     = 0.08;
-
-        // 取引登録をする
-        // パラメータ生成
-        $param =[
-            'ShopID'    => env('SHOP_ID'),
-            'ShopPass'  => env('SHOP_PASS'),
-            'OrderID'   => $OrderID, //日付（yyyymmdd）+ランダム英数字8桁のIDを付与
-            'JobCd'     => 'CHECK', //有効性チェック
-            'Amount'    => $Amount,
-            'Tax'       => $Amount * $Tax
-        ];
-        return $param;
-    }
-
-    public function generateExecParam(array $data,  $param) {
-
-        // 決済実行
-        // 
-        $execParam = [
-            'AccessID'      => $param['AccessID'],
-            'AccessPass'    => $param['AccessPass'],
-            'CardNo'        => $data['credit_num'],
-            'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
-            'OrderID'       => $param['OrderID']
-        ];
-        //dd($execParam['OrderID']);
-        return $execParam;
-
-    }
-
-    public function generateSaveMemberParam($contact_id) {
-        // dd($contact_id,$name);
-        $execParam = [
-            'SiteID'    => env('SITE_ID'),
-            'SitePass'  => env('SITE_PASS'),
-            'MemberID'  => '1111D1000U55TxQAJ',
-            'MemberName'  => '青あか'
-        ];
-        // dd($contact_id);
-        return $execParam;
-    }
-     
-    public function generateSaveCardParam($member_id,$params) {
-        $execParam = [
-            'SiteID'        => env('SITE_ID'),
-            'SitePass'      => env('SITE_PASS'),
-            'MemberID'      => $member_id,
-            'DefaultFlag'    => '1',
-            'CardNo'        => $params['CreditCardNumber__c'],
-            'Expire'        => $params['CreditLimitMonth__c'].$params['CreditLimitYear__c'],
-            'HolderName'    => $params['CreditOwnerName__c'],
-        ];
-        // dd($execParam);
-        return $execParam;
-    }
-
-    /*
-     * @description GMOへrequestを投げる
-     *
-     */
-    public function gmoEntry(array $param){
-        $url = env('GMO_URL').'/payment/EntryTran.idPass';
-        $client = new Client();
-        // guzzleの送信処理 データは'form_params'というキー名(guzzleの仕様)
-        $res = $client->request('post', $url, [
-            'form_params' => $param
-        ]);
-        parse_str($res->getBody(),$param);
-
-        return $param;
-    }
-
-
-    public function gmoExec(array $param){
-        $url = env('GMO_URL').'/payment/ExecTran.idPass';
-        $client = new Client();
-        // guzzleの送信処理 データは'form_params'というキー名(guzzleの仕様)
-        $res = $client->request('post', $url, [
-            'form_params' => $param
-        ]);
-        parse_str($res->getBody(),$param);
-        return $param;
-    }
-
-    public function gmoSaveMember(array $param){
-        $url = env('GMO_URL').'/payment/SaveMember.idPass';
-        $client = new Client();
-        // guzzleの送信処理 データは'form_params'というキー名(guzzleの仕様)
-        // dd($param);
-        $res = $client->request('post', $url, [
-            'form_params' => $param
-        ]);
-    
-        parse_str($res->getBody(),$param['err']);
-
-        if (isset($param['err']['ErrCode']) && $param['err']['ErrInfo'] !== 'E01390010') {
-            // 取引登録失敗
-            // throw new \Exception('gmoSaveMember');
-            return false;
-        }
-// dd($param);
-        return $param['MemberID'];
-    }
-
-    public function gmoSaveCard($param){
-        $url = env('GMO_URL').'/payment/SaveCard.idPass';
-        $client = new Client();
-        // guzzleの送信処理 データは'form_params'というキー名(guzzleの仕様)
-        $res = $client->request('post', $url, [
-            'form_params' => $param
-        ]);
-        parse_str($res->getBody(),$param);
-        return $param;
-    }
-
-    public function generateSfParams(array $body){
+        public function generateSfParams(array $body){
         $account = $ownServices = [];
         /*
          * 取引先(顧客情報),自社サービス登録内容
@@ -164,10 +43,10 @@ class EntryService
             "CreditCardNumber__c"   => $body["credit_num"],
             "CreditLimitMonth__c"   => $body["expiration_date_month"],
             "CreditLimitYear__c"    => $body["expiration_date_year"],
-            "CreditOwnerName__c"    => $body["credit_name"]
+            "CreditOwnerName__c"    => $body["credit_name"],
         ];
 
-        return compact('account','OwnServices','payment');
+        return compact('account','ownServices','payment');
 
         }
 
@@ -200,17 +79,6 @@ class EntryService
 
         return $contact_id;
 
-    }
-
-    public function createSfPayment($param){
-        Forrest::authenticate();
-
-        $c = Forrest::sobjects('SimPaymentInfo__c',[
-                'method' => 'post',
-                'body'   => $param
-        ]);
-        // 取引先責任者ID取得
-        return $c;
     }
 
     public function createSfOwnservice($param){

@@ -35,8 +35,8 @@ class EntryService
 
     public function generateExecParam(array $data,  $param) {
 
-        // 決済実行
-        // 
+        //決済実行
+        //
         $execParam = [
             'AccessID'      => $param['AccessID'],
             'AccessPass'    => $param['AccessPass'],
@@ -49,29 +49,31 @@ class EntryService
 
     }
 
-    public function generateSaveMemberParam($contact_id) {
-        // dd($contact_id,$name);
+    public function generateSaveMemberParam($data,$name) {
+        // dd($contact_id,$params );
         $execParam = [
             'SiteID'    => env('SITE_ID'),
             'SitePass'  => env('SITE_PASS'),
-            'MemberID'  => '1111D1000U55TxQAJ',
-            'MemberName'  => '青あか'
+            'MemberID'  => $data['OredrID'],
+            'MemberName'  => $name
         ];
-        // dd($contact_id);
+        dd($execParam['MemberID']);
         return $execParam;
     }
-     
+    
     public function generateSaveCardParam($member_id,$params) {
+        // dd($contact_id,$params );
         $execParam = [
             'SiteID'        => env('SITE_ID'),
             'SitePass'      => env('SITE_PASS'),
             'MemberID'      => $member_id,
-            'DefaultFlag'    => '1',
-            'CardNo'        => $params['CreditCardNumber__c'],
-            'Expire'        => $params['CreditLimitMonth__c'].$params['CreditLimitYear__c'],
-            'HolderName'    => $params['CreditOwnerName__c'],
+            'DefaultFlag'    => 1,
+            'CardNo'        => $data['credit_num'],
+            'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
+            'HolderName'    => $data['credit_name'],
         ];
-        // dd($execParam);
+        dd($execParam);
+ 
         return $execParam;
     }
 
@@ -111,7 +113,6 @@ class EntryService
         $res = $client->request('post', $url, [
             'form_params' => $param
         ]);
-    
         parse_str($res->getBody(),$param['err']);
 
         if (isset($param['err']['ErrCode']) && $param['err']['ErrInfo'] !== 'E01390010') {
@@ -119,7 +120,7 @@ class EntryService
             // throw new \Exception('gmoSaveMember');
             return false;
         }
-// dd($param);
+
         return $param['MemberID'];
     }
 
@@ -131,6 +132,7 @@ class EntryService
             'form_params' => $param
         ]);
         parse_str($res->getBody(),$param);
+
         return $param;
     }
 
@@ -160,14 +162,7 @@ class EntryService
              'OrderID__c' => ''
          ];
 
-         $payment = [
-            "CreditCardNumber__c"   => $body["credit_num"],
-            "CreditLimitMonth__c"   => $body["expiration_date_month"],
-            "CreditLimitYear__c"    => $body["expiration_date_year"],
-            "CreditOwnerName__c"    => $body["credit_name"]
-        ];
-
-        return compact('account','OwnServices','payment');
+        return compact('account','ownServices');
 
         }
 
@@ -193,24 +188,10 @@ class EntryService
         Forrest::authenticate();
 
         $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
-        // dd($c);
         // 取引先責任者ID取得
         $contact_id = $c['records'][0]['Id'];
-        // dd($contact_id);
-
         return $contact_id;
 
-    }
-
-    public function createSfPayment($param){
-        Forrest::authenticate();
-
-        $c = Forrest::sobjects('SimPaymentInfo__c',[
-                'method' => 'post',
-                'body'   => $param
-        ]);
-        // 取引先責任者ID取得
-        return $c;
     }
 
     public function createSfOwnservice($param){

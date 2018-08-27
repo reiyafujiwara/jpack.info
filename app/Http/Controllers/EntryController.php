@@ -113,19 +113,19 @@ class EntryController extends Controller
                 'expiration_date_month' => 'クレジットカード有効期限(月)',
                 'expiration_date_year' => 'クレジットカード有効期限(年)'
             ]);
-            $data = $request->all();
+            $params = $request->all();
             // 有効性チェックは無し、カード情報登録を行うときにも走るため、短時間で複数チェックを走らせるとカード会社に不正アクセスとみなされる可能性が高い
             // gmo取引登録
-            $entryParam = $this->entryService->generateEntryParam($data);
+            $entryParam = $this->entryService->generateEntryParam($params);
             $res = $this->entryService->gmoEntry($entryParam);
             if(!isset($res['ErrCode'])){
             // gmo決済（有効性チェック)
             $res['OrderID'] = $entryParam['OrderID'];
             // チェック実行パラメータ作成
-            $execParam = $this->entryService->generateExecParam($data, $res);
+            $execParam = $this->entryService->generateExecParam($params, $res);
             $resp = $this->entryService->gmoExec($execParam);
         }
-        return view('entryform.confirm')->with($data);
+        return view('entryform.confirm')->with($params);
     }
 
 
@@ -152,22 +152,26 @@ class EntryController extends Controller
         // SF：顧客作成
         // account contract payment delivery
         $params = $this->entryService->generateSfParams($request->all());
-        //dd($params); 処理確認OK
+        // dd($params); 処理確認OK
         $account        = $this->entryService->createSfAccount($params['account']);
-        // dd($account); salesforce response error
+        // dd($account); //0015D00000NFweSQAT
         
         // SF：取引先から取引先責任者のIDの取得
         $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
-
-        //GMO：会員登録用パラメータ作成
+        // dd($contact_id);
+        // GMO：会員登録用パラメータ作成
         $member_param   = $this->entryService->generateSaveMemberParam($params['payment']['CreditOwnerName__c']);
+        // dd($member_param); generateSaveMemberParamのMemberIDとMemberNameを直接指定で値格納確認
 
         // GMO：会員登録
         $member_id      = $this->entryService->gmoSaveMember($member_param);
+
         if($member_id !== false){
             // GMO：会員にカード番号
             $save_param     = $this->entryService->generateSaveCardParam($member_id,$params['payment']);
+            // dd($save_param);
             $card_save      = $this->entryService->gmoSaveCard($save_param);
+            // dd($card_save);
             if(!isset($card_save['ErrCode'])){
                 $pay = [
                   'CardSeq__c'        => $card_save['CardSeq'],
@@ -175,17 +179,20 @@ class EntryController extends Controller
                   'PaymentType__c'    => 'クレジットカード',
                   'Contact__c'        => $contact_id
                 ];
+                dd($pay);
                 // カードをGMOへ登録し、登録IDを取得
+                // dd($card_save);
                 $this->entryService->createSfPayment($pay);
                 $params['contract']['Contact__c'] = $contact_id;
-                // ↓contactのことになります
-                $params['delivery']['Delivery__c'] = $contact_id;
-                $sfparams = $this->entryService->createSfContract($params['contract']);
-                $this->entryService->createSfDelivery($params['delivery']);
 
-        return view('entryform.thanks');
-        }
-    }
+                // ↓contactのことになります
+                // $params['delivery']['Delivery__c'] = $contact_id;
+                $sfparams = $this->entryService->createSfContract($params['contract']);
+
+
+                 return view('entryform.thanks');
+                }
+            }
 }
 }
 
