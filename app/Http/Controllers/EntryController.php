@@ -19,7 +19,10 @@ class EntryController extends Controller
 
     public function create ()
     {
-        return view('entryform.entryform');
+        $OrderID = date('Ymd').str_random(8);
+        $Amount  = 2300;
+        $Tax     = 0.08;
+        return view('entryform.entryform',compact('OrderID','Amount','Tax'));
     }
 
     /**
@@ -124,6 +127,7 @@ class EntryController extends Controller
             // チェック実行パラメータ作成
             $execParam = $this->entryService->generateExecParam($params, $res);
             $resp = $this->entryService->gmoExec($execParam);
+            
         }
         return view('entryform.confirm')->with($params);
     }
@@ -148,52 +152,81 @@ class EntryController extends Controller
         }
 
 
+        $EntryData = $request->all();
 
-        // SF：顧客作成
-        // account contract payment delivery
-        $params = $this->entryService->generateSfParams($request->all());
-        // dd($params); 処理確認OK
-        $account        = $this->entryService->createSfAccount($params['account']);
-        // dd($account); //0015D00000NFweSQAT
-        
-        // SF：取引先から取引先責任者のIDの取得
-        $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
-        // dd($contact_id);
-        // GMO：会員登録用パラメータ作成
-        $member_param   = $this->entryService->generateSaveMemberParam($params['payment']['CreditOwnerName__c']);
-        // dd($member_param); generateSaveMemberParamのMemberIDとMemberNameを直接指定で値格納確認
+        $SfParam = $this->entryService->generateSfParams($EntryData);
+        $SfAccount = $this->entryService->createSfAccount($SfParam['account']);
+        // dd($SfAccount);
+        $OwnService_param = $SfParam['OwnService'];
+        $OwnService_Account = $this->entryService->createSfOwnService($OwnService_param);
 
-        // GMO：会員登録
-        $member_id      = $this->entryService->gmoSaveMember($member_param);
+        $member_param = $this->entryService->generateSaveMemberParam($EntryData);
+
+        $member_id = $this->entryService->gmoSaveMember($member_param);
 
         if($member_id !== false){
-            // GMO：会員にカード番号
-            $save_param     = $this->entryService->generateSaveCardParam($member_id,$params['payment']);
-            // dd($save_param);
+            $save_param     = $this->entryService->generateSaveCardParam($member_id,$EntryData);
+
             $card_save      = $this->entryService->gmoSaveCard($save_param);
             // dd($card_save);
-            if(!isset($card_save['ErrCode'])){
-                $pay = [
-                  'CardSeq__c'        => $card_save['CardSeq'],
-                  'GmoId__c'          => $member_id,
-                  'PaymentType__c'    => 'クレジットカード',
-                  'Contact__c'        => $contact_id
-                ];
-                dd($pay);
-                // カードをGMOへ登録し、登録IDを取得
-                // dd($card_save);
-                $this->entryService->createSfPayment($pay);
-                $params['contract']['Contact__c'] = $contact_id;
-
-                // ↓contactのことになります
-                // $params['delivery']['Delivery__c'] = $contact_id;
-                $sfparams = $this->entryService->createSfContract($params['contract']);
 
 
-                 return view('entryform.thanks');
-                }
-            }
-}
+
+        // dd($member_param);
+
+
+            return view('entryform.thanks');
+        }
+    }
+
+
+
+        // // SF：顧客作成
+        // // account contract payment delivery
+        // $params = $this->entryService->generateSfParams($request->all());
+        // // dd($params); 処理確認OK
+        // $account        = $this->entryService->createSfAccount($params['account']);
+        // // dd($account); //0015D00000NFweSQAT
+        
+        // // SF：取引先から取引先責任者のIDの取得
+        // $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
+        // // dd($contact_id);
+        // // GMO：会員登録用パラメータ作成
+        // // dd($params);
+        // $member_param   = ($params['payment']['CreditOwnerName__c']);
+        // // dd($member_param); generateSaveMemberParamのMemberIDとMemberNameを直接指定で値格納確認
+
+        // // GMO：会員登録
+        // $member_id      = $this->entryService->gmoSaveMember($member_param);
+
+        // if($member_id !== false){
+        //     // GMO：会員にカード番号
+        //     $save_param     = $this->entryService->generateSaveCardParam($member_id,$params['payment']);
+        //     // dd($save_param);
+        //     $card_save      = $this->entryService->gmoSaveCard($save_param);
+        //     // dd($card_save);
+        //     if(!isset($card_save['ErrCode'])){
+        //         $pay = [
+        //           'CardSeq__c'        => $card_save['CardSeq'],
+        //           'GmoId__c'          => $member_id,
+        //           'PaymentType__c'    => 'クレジットカード',
+        //           'Contact__c'        => $contact_id
+        //         ];
+
+        //         // カードをGMOへ登録し、登録IDを取得
+
+        //         $this->entryService->createSfPayment($pay);
+        //         $params['contract']['Contact__c'] = $contact_id;
+
+        //         // ↓contactのことになります
+        //         // $params['delivery']['Delivery__c'] = $contact_id;
+        //         $sfparams = $this->entryService->createSfContract($params['contract']);
+
+
+        //          return view('entryform.thanks');
+        //         }
+        //     }
+
 }
 
 

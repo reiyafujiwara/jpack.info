@@ -14,27 +14,24 @@ use Carbon\Carbon;
 class EntryService 
 {
 
-    public function generateEntryParam() {
-
-        $OrderID = date('Ymd').str_random(8);
-        $Amount  = 2300;
-        $Tax     = 0.08;
+    public function generateEntryParam($params){
 
         // 取引登録をする
         // パラメータ生成
         $param =[
             'ShopID'    => env('SHOP_ID'),
             'ShopPass'  => env('SHOP_PASS'),
-            'OrderID'   => $OrderID, //日付（yyyymmdd）+ランダム英数字8桁のIDを付与
+            'OrderID'   => $params['OrderID'], //日付（yyyymmdd）+ランダム英数字8桁のIDを付与
             'JobCd'     => 'CHECK', //有効性チェック
-            'Amount'    => $Amount,
-            'Tax'       => $Amount * $Tax
+            'Amount'    => $params['Amount'],
+            'Tax'       => $params['Amount'] * $params['Tax']
         ];
+        // dd($param);
         return $param;
     }
 
-    public function generateExecParam(array $data,  $param) {
-
+    public function generateExecParam(array $data,$param) {
+        // dd($data,$param);
         // 決済実行
         // 
         $execParam = [
@@ -44,32 +41,32 @@ class EntryService
             'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
             'OrderID'       => $param['OrderID']
         ];
-        //dd($execParam['OrderID']);
         return $execParam;
 
     }
 
-    public function generateSaveMemberParam($contact_id) {
-        // dd($contact_id,$name);
+    public function generateSaveMemberParam($EntryData) {
+        // dd($EntryData);
         $execParam = [
             'SiteID'    => env('SITE_ID'),
             'SitePass'  => env('SITE_PASS'),
-            'MemberID'  => '1111D1000U55TxQAJ',
-            'MemberName'  => '青あか'
+            'MemberID'  => uniqid("JBOX_"),
+            'MemberName'  => $EntryData['name1'].$EntryData['name2']
         ];
-        // dd($contact_id);
+
         return $execParam;
     }
      
-    public function generateSaveCardParam($member_id,$params) {
+    public function generateSaveCardParam($member_id,$EntryData) {
+
         $execParam = [
             'SiteID'        => env('SITE_ID'),
             'SitePass'      => env('SITE_PASS'),
             'MemberID'      => $member_id,
-            'DefaultFlag'    => '1',
-            'CardNo'        => $params['CreditCardNumber__c'],
-            'Expire'        => $params['CreditLimitMonth__c'].$params['CreditLimitYear__c'],
-            'HolderName'    => $params['CreditOwnerName__c'],
+            'DefaultFlag'    => 1,
+            'CardNo'        => $EntryData['credit_num'],
+            'Expire'        => $EntryData['expiration_date_month'].$EntryData['expiration_date_year'],
+            'HolderName'    => $EntryData['credit_name']
         ];
         // dd($execParam);
         return $execParam;
@@ -134,156 +131,114 @@ class EntryService
         return $param;
     }
 
-    public function generateSfParams(array $body){
-        $account = $ownServices = [];
+    public function generateSfParams(array $EntryData){
+        // dd($EntryData);
         /*
          * 取引先(顧客情報),自社サービス登録内容
          */
 
          $account = [
-            "LastName"          => $body['name1'],
-            "FirstName"         => $body['name2'],
-            "Furigana__c"       => $body['kana1'].' '.$body['kana2'],
-            "LastnameKana__c"   => $body['kana1'],
-            "FirstnameKana__c"  => $body['kana2'],
-            "Phone1__c"         => $body['tel'],
-            "PostalCode_del__c" => $body['zipcode1'].$body['zipcode2'],
-            "Address__c"        => $body['address1'].$body['address2'].$body['address3'],
-            "PersonBirthdate"   => $body['birthday_year'].'-'.$body['birthday_month'].'-'.$body['birthday_day'],
-            "Sex__c"            => $body['sex'],
+            "LastName"          => $EntryData['name1'],
+            "FirstName"         => $EntryData['name2'],
+            "Furigana__c"       => $EntryData['kana1'].' '.$EntryData['kana2'],
+            "LastnameKana__c"   => $EntryData['kana1'],
+            "FirstnameKana__c"  => $EntryData['kana2'],
+            "Phone1__c"         => $EntryData['tel'],
+            "PostalCode_del__c" => $EntryData['zipcode1'].$EntryData['zipcode2'],
+            "Address__c"        => $EntryData['address1'].$EntryData['address2'].$EntryData['address3'],
+            "PersonBirthdate"   => $EntryData['birthday_year'].'-'.$EntryData['birthday_month'].'-'.$EntryData['birthday_day'],
+            "Sex__c"            => $EntryData['sex'],
             "PriorityContact__c"=> '電話①' 
          ];
 
          $OwnService = [
-             'EntryDay__c' => date('Ymd'),
+             
+             'EntryDay__c' => date('Y').'-'.date('m').'-'.date('d'),
              //どこから指定して入力？
-             'OrderID__c' => ''
+             'Name' => $EntryData['OrderID'],
+             'GMO_ID__C' => uniqid("JBOX_")
+
          ];
 
-         $payment = [
-            "CreditCardNumber__c"   => $body["credit_num"],
-            "CreditLimitMonth__c"   => $body["expiration_date_month"],
-            "CreditLimitYear__c"    => $body["expiration_date_year"],
-            "CreditOwnerName__c"    => $body["credit_name"]
-        ];
 
-        return compact('account','OwnServices','payment');
+
+        return compact('account','OwnService','payment');
 
         }
+
 
     /*
      * @description
      * @return account_id
      */
-    public function createSfAccount($body){
+    public function createSfAccount($SfEntryData){
+        // dd($SfEntryData);
         Forrest::authenticate();
-        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$body['LastName']."'AND Phone1__c='".$body['Phone1__c']."'");
-
+        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$SfEntryData['LastName']."'AND Phone1__c='".$SfEntryData['Phone1__c']."'");
         if($a['totalSize'] === 0){
             $a = Forrest::sobjects('Account',[
               'method' => 'post',
-              'body'   => $body
+              'body'   => $SfEntryData
             ]);
             return $a;
         }
         return ['id' => $a['records'][0]['Id']];
     }
 
-    public function getSfContactId($account_id){
-        Forrest::authenticate();
+    // public function getSfContactId($account_id){
+    //     Forrest::authenticate();
 
-        $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
-        // dd($c);
-        // 取引先責任者ID取得
-        $contact_id = $c['records'][0]['Id'];
-        // dd($contact_id);
+    //     $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
+    //     // 取引先責任者ID取得
+    //     $contact_id = $c['records'][0]['Id'];
+    //     return $contact_id;
 
-        return $contact_id;
-
-    }
-
-    public function createSfPayment($param){
-        Forrest::authenticate();
-
-        $c = Forrest::sobjects('SimPaymentInfo__c',[
-                'method' => 'post',
-                'body'   => $param
-        ]);
-        // 取引先責任者ID取得
-        return $c;
-    }
-
-    public function createSfOwnservice($param){
+    // }
+    
+    public function createSfOwnservice($OwnService_param){
         Forrest::authenticate();
 
         $c = Forrest::sobjects('OwnService__c',[
                 'method' => 'post',
-                'body'   => $Ownservice
-        ]);
-        // 取引先責任者ID取得
-        return $c;
-    }
-
-    public function createSfContract($param){
-        Forrest::authenticate();
-
-        $c = Forrest::sobjects('SimContract__c',[
-                'method' => 'post',
-                'body'   => $param
+                'body'   => $OwnService_param
         ]);
         // 取引先責任者ID取得
         return $c;
     }
 
 
+    public function sendMail($params, $sfcontract, $plan)
+    {
+        // メールの送信先、送信元情報
+        $options = [
+            'from' => env('MAIL_FROM_ADDRESS'),
+            'from_jp' => env('MAIL_FROM_NAME'),
+            'to' => $params['account']['PersonEmail'],
+        ];
 
-    /**
-     * sfのcontract情報を取得
-     * @param  [type] $sfparams [description]
-     * @return [type]           [description]
-     */
-    public function getSfContract($sfparams){
-        Forrest::authenticate();
-
-        // 絞り込みがわからなかったので一旦全件取得
-        $c = Forrest::query("SELECT Id, Name FROM SimContract__c WHERE Id='".$sfparams['id']."'");
-
-        // 取引先責任者ID取得
-        return $c['records'][0];
+        // メールの送信内容
+        $data = [
+            // 契約ID
+            'sfid' => $sfcontract['Name'],
+            // セット内容
+            'set' => $plan->set,
+            // プラン
+            'plan' => $plan->name,
+            // 月額
+            'price' => $plan->price,
+            // 25ヶ月目以降料金
+            'priceafter' => $plan->priceafter,
+            // 最低利用期間
+            'minimumperiod' => $plan->minimumperiod,
+            // 契約者名
+            'name' => $params['account']['LastName'].' '.$params['account']['FirstName'],
+            // 届け先住所
+            'address' => $params['delivery']['SameAddress__c'] ? $params['account']['Address__c'] : $params['delivery']['PreferredAddress__c'],
+            // お届け希望日時
+            'preferreddatetime' => (isset($params['delivery']['PreferredDate__c']) ? Carbon::parse($params['delivery']['PreferredDate__c'])->format('Y年m月d日') : '日付指定なし').' '.(isset($params['delivery']['PreferredTime__c']) ? $params['delivery']['PreferredTime__c'] : '時間指定なし'),
+        ];
+        Mail::to($options['to'])->bcc(env('MAIL_FORWARD_ADDRESS'))->send(new SendingEntry($options, $data));
     }
-
-    // public function sendMail($params, $sfcontract, $plan)
-    // {
-    //     // メールの送信先、送信元情報
-    //     $options = [
-    //         'from' => env('MAIL_FROM_ADDRESS'),
-    //         'from_jp' => env('MAIL_FROM_NAME'),
-    //         'to' => $params['account']['PersonEmail'],
-    //     ];
-
-    //     // メールの送信内容
-    //     $data = [
-    //         // 契約ID
-    //         'sfid' => $sfcontract['Name'],
-    //         // セット内容
-    //         'set' => $plan->set,
-    //         // プラン
-    //         'plan' => $plan->name,
-    //         // 月額
-    //         'price' => $plan->price,
-    //         // 25ヶ月目以降料金
-    //         'priceafter' => $plan->priceafter,
-    //         // 最低利用期間
-    //         'minimumperiod' => $plan->minimumperiod,
-    //         // 契約者名
-    //         'name' => $params['account']['LastName'].' '.$params['account']['FirstName'],
-    //         // 届け先住所
-    //         'address' => $params['delivery']['SameAddress__c'] ? $params['account']['Address__c'] : $params['delivery']['PreferredAddress__c'],
-    //         // お届け希望日時
-    //         'preferreddatetime' => (isset($params['delivery']['PreferredDate__c']) ? Carbon::parse($params['delivery']['PreferredDate__c'])->format('Y年m月d日') : '日付指定なし').' '.(isset($params['delivery']['PreferredTime__c']) ? $params['delivery']['PreferredTime__c'] : '時間指定なし'),
-    //     ];
-    //     Mail::to($options['to'])->bcc(env('MAIL_FORWARD_ADDRESS'))->send(new SendingEntry($options, $data));
-    // }
 
 
 }

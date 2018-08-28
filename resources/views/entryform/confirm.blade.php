@@ -15,7 +15,9 @@
  
 <form action="{{ route('entryform.thanks') }}" method="post" class="form-horizontal">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
+  <input type="hidden" name="OrderID" value="{{$OrderID}}">
+  <input type="hidden" name="Amount" value="{{$Amount}}">
+  <input type="hidden" name="Tax" value="{{$Tax}}">
   <input type="hidden" name="name1" value="{{$name1}}">
   <input type="hidden" name="name2" value="{{$name2}}">
   <input type="hidden" name="kana1" value="{{$kana1}}">
