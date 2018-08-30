@@ -151,26 +151,24 @@ class EntryController extends Controller
             ->withInput($request->except(['action', 'Jボックス']));
         }
 
-
-        $EntryData = $request->all();
-
-        $SfParam = $this->entryService->generateSfParams($EntryData);
+        $SfParam = $this->entryService->generateSfParams($request->all());
         $SfAccount = $this->entryService->createSfAccount($SfParam['account']);
-        // dd($SfAccount);
-        $OwnService_param = $SfParam['OwnService'];
-        $OwnService_Account = $this->entryService->createSfOwnService($OwnService_param);
 
-        $member_param = $this->entryService->generateSaveMemberParam($EntryData);
+        // dd($SfAccount);
+        $contact_id     = $this->entryService->getSfContactId($SfAccount['id'],$SfParam);
+        $member_param = $this->entryService->generateSaveMemberParam($SfParam);
 
         $member_id = $this->entryService->gmoSaveMember($member_param);
 
         if($member_id !== false){
-            $save_param     = $this->entryService->generateSaveCardParam($member_id,$EntryData);
+            $save_param     = $this->entryService->generateSaveCardParam($member_id,$SfParam);
 
             $card_save      = $this->entryService->gmoSaveCard($save_param);
             // dd($card_save);
 
-
+            $SfParam['OwnService']['Contact__c'] = $contact_id;
+            // dd($SfParam);
+            $OptionParam = $this->entryService->createSfOwnService($SfParam);
 
         // dd($member_param);
 

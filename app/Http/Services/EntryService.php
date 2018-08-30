@@ -45,28 +45,28 @@ class EntryService
 
     }
 
-    public function generateSaveMemberParam($EntryData) {
-        // dd($EntryData);
+    public function generateSaveMemberParam($SfParam) {
+        // dd($SfParam);
         $execParam = [
             'SiteID'    => env('SITE_ID'),
             'SitePass'  => env('SITE_PASS'),
-            'MemberID'  => uniqid("JBOX_"),
-            'MemberName'  => $EntryData['name1'].$EntryData['name2']
+            'MemberID'  => $SfParam['OwnService']['Name'],
+            'MemberName'  => $SfParam['account']
         ];
 
         return $execParam;
     }
      
-    public function generateSaveCardParam($member_id,$EntryData) {
+    public function generateSaveCardParam($member_id,$SfParam) {
 
         $execParam = [
             'SiteID'        => env('SITE_ID'),
             'SitePass'      => env('SITE_PASS'),
             'MemberID'      => $member_id,
             'DefaultFlag'    => 1,
-            'CardNo'        => $EntryData['credit_num'],
-            'Expire'        => $EntryData['expiration_date_month'].$EntryData['expiration_date_year'],
-            'HolderName'    => $EntryData['credit_name']
+            'CardNo'        => $SfParam['payment']['CreditCardNumber'],
+            'Expire'        => $SfParam['payment']['CreditLimit'],
+            'HolderName'    => $SfParam['payment']['CreditOwnerName']
         ];
         // dd($execParam);
         return $execParam;
@@ -131,35 +131,38 @@ class EntryService
         return $param;
     }
 
-    public function generateSfParams(array $EntryData){
-        // dd($EntryData);
+    public function generateSfParams(array $SfParam){
+        // dd($SfParam);
         /*
          * 取引先(顧客情報),自社サービス登録内容
          */
 
          $account = [
-            "LastName"          => $EntryData['name1'],
-            "FirstName"         => $EntryData['name2'],
-            "Furigana__c"       => $EntryData['kana1'].' '.$EntryData['kana2'],
-            "LastnameKana__c"   => $EntryData['kana1'],
-            "FirstnameKana__c"  => $EntryData['kana2'],
-            "Phone1__c"         => $EntryData['tel'],
-            "PostalCode_del__c" => $EntryData['zipcode1'].$EntryData['zipcode2'],
-            "Address__c"        => $EntryData['address1'].$EntryData['address2'].$EntryData['address3'],
-            "PersonBirthdate"   => $EntryData['birthday_year'].'-'.$EntryData['birthday_month'].'-'.$EntryData['birthday_day'],
-            "Sex__c"            => $EntryData['sex'],
+            "LastName"          => $SfParam['name1'],
+            "FirstName"         => $SfParam['name2'],
+            "Furigana__c"       => $SfParam['kana1'].' '.$SfParam['kana2'],
+            "LastnameKana__c"   => $SfParam['kana1'],
+            "FirstnameKana__c"  => $SfParam['kana2'],
+            "Phone1__c"         => $SfParam['tel'],
+            "PostalCode_del__c" => $SfParam['zipcode1'].$SfParam['zipcode2'],
+            "Address__c"        => $SfParam['address1'].$SfParam['address2'].$SfParam['address3'],
+            "PersonBirthdate"   => $SfParam['birthday_year'].'-'.$SfParam['birthday_month'].'-'.$SfParam['birthday_day'],
+            "Sex__c"            => $SfParam['sex'],
             "PriorityContact__c"=> '電話①' 
          ];
 
          $OwnService = [
-             
-             'EntryDay__c' => date('Y').'-'.date('m').'-'.date('d'),
-             //どこから指定して入力？
-             'Name' => $EntryData['OrderID'],
-             'GMO_ID__C' => uniqid("JBOX_")
-
+             'EntryDate__c' => date('Y-m-d'),
+             'Order_ID__c' => $SfParam['OrderID'],
+             'Name' => uniqid("JBOX_"),
+             'Option_name__c' => 'Jボックス'
          ];
 
+         $payment = [
+            "CreditCardNumber"   => $SfParam["credit_num"],
+            "CreditLimit"   => $SfParam['expiration_date_month'].$SfParam['expiration_date_year'],
+            "CreditOwnerName"    => $SfParam["credit_name"],
+        ];
 
 
         return compact('account','OwnService','payment');
@@ -171,36 +174,36 @@ class EntryService
      * @description
      * @return account_id
      */
-    public function createSfAccount($SfEntryData){
-        // dd($SfEntryData);
+    public function createSfAccount($SfSfParam){
+        // dd($SfSfParam);
         Forrest::authenticate();
-        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$SfEntryData['LastName']."'AND Phone1__c='".$SfEntryData['Phone1__c']."'");
+        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$SfSfParam['LastName']."'AND Phone1__c='".$SfSfParam['Phone1__c']."'");
         if($a['totalSize'] === 0){
             $a = Forrest::sobjects('Account',[
               'method' => 'post',
-              'body'   => $SfEntryData
+              'body'   => $SfSfParam
             ]);
             return $a;
         }
         return ['id' => $a['records'][0]['Id']];
     }
 
-    // public function getSfContactId($account_id){
-    //     Forrest::authenticate();
-
-    //     $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
-    //     // 取引先責任者ID取得
-    //     $contact_id = $c['records'][0]['Id'];
-    //     return $contact_id;
-
-    // }
-    
-    public function createSfOwnservice($OwnService_param){
+    public function getSfContactId($account_id){
         Forrest::authenticate();
 
-        $c = Forrest::sobjects('OwnService__c',[
+        $c = Forrest::query("select Id from Contact where AccountId='".$account_id."'");
+        // 取引先責任者ID取得
+        $contact_id = $c['records'][0]['Id'];
+        return $contact_id;
+
+    }
+    
+    public function createSfOwnservice($SfParam){
+        Forrest::authenticate();
+
+        $c = Forrest::sobjects('OwnServices__c',[
                 'method' => 'post',
-                'body'   => $OwnService_param
+                'body'   => $SfParam['OwnService']
         ]);
         // 取引先責任者ID取得
         return $c;
