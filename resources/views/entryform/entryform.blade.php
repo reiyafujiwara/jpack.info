@@ -6,7 +6,7 @@
 </head>
 
 @section('content')
-	<div class="container">
+	<div class="container clearfix">
 	
         
 		<div class="row">
@@ -35,73 +35,72 @@
 			
 			
 			<div class="col-xs-10 col-xs-offset-1">
+
 			<form action="{{route('entryform.confirm')}}" id="form" class="entry-form" method="post" role="form">
 				<input type="hidden" name="type" value="Jボックス">
 				<input type="hidden" name="confirming" value="{{ old('confirming', 'false') }}")>
 				<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-			<input type="hidden" name="OrderID" value="{{$OrderID}}"">
+			<input type="hidden" name="OrderID" value="{{$OrderID}}">
 				<input type="hidden" name="Amount" value="{{$Amount}}">
 				<input type="hidden" name="Tax" value="{{$Tax}}">
 
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="input text required">
-							<label class="mark-require" for="name">氏名</label>
-						</div>
-						<div class="col-xs-1 padding-none form-lavel-position">姓</div>				
-						<div class="col-xs-8 col-sm-4">
-							<input type="text" name="name1" class="form-control" placeholder="例)山田" required="required" maxlength="30" id="name1" value="{{ old('name1')}}">
-
-						</div>
-						<div class="col-xs-1 padding-none form-lavel-position">名</div>
-						<div class="col-xs-8 col-sm-4">
-							<input type="text" name="name2" class="form-control" placeholder="例)太郎" required="required" maxlength="30" id="name2" value="{{ old('name2')}}">
-
-						</div>
+						<label class="mark-require" for="name">氏名</label>
 					</div>
-				<div class="form-group col-xs-10">
+					<div class="col-xs-2 col-sm-1 padding-none form-lavel-position">姓</div>				
+					<div class="col-xs-10 col-sm-4">
+						<input type="text" name="name1" class="form-control" placeholder="例)山田" required="required" maxlength="30" id="name1" value="{{ old('name1')}}">
+					</div>
+					<div class="col-xs-2 col-sm-1 padding-none form-lavel-position">名</div>
+					<div class="col-xs-10 col-sm-4">
+						<input type="text" name="name2" class="form-control" placeholder="例)太郎" required="required" maxlength="30" id="name2" value="{{ old('name2')}}">
+					</div>
+				</div>
+				<div class="form-group col-xs-12">
 						<div class="input text required">
 							<label class="mark-require" for="kana">フリガナ[カタカナ全角]</label>
 						</div>
-						<div class="col-xs-1 padding-none form-lavel-position">セイ</div>				
-						<div class="col-xs-8 col-sm-4">
+						<div class="col-xs-2 col-sm-1 padding-none form-lavel-position">セイ</div>				
+						<div class="col-xs-10 col-sm-4">
 							<input type="text" name="kana1" class="form-control" placeholder="例)ヤマダ" required="required" maxlength="30" id="kana1" value="{{ old('kana1')}}">
 						</div>
-						<div class="col-xs-1 padding-none form-lavel-position">メイ</div>
-						<div class="col-xs-8 col-sm-4">
+						<div class="col-xs-2 col-sm-1 padding-none form-lavel-position">メイ</div>
+						<div class="col-xs-10 col-sm-4">
 							<input type="text" name="kana2" class="form-control" placeholder="例)タロウ" required="required" maxlength="30" id="kana2" value="{{ old('kana2')}}">
 
 						</div>
 					</div>
-				<div class="form-group col-xs-10 col-sm-6">
-					<div class="input select required"><label class="mark-require" for="sex">性別</label>
+				<div class="form-group col-xs-12 col-sm-6">
+					<div class="input select required "><label class="mark-require" for="sex">性別</label>
 							<select name="sex" between="<div class=&quot;form-group col-xs-10&quot;>" class="form-control" required="required" id="sex">
 								<option value="男性">男性</option>
 								<option value="女性">女性</option>
 							</select>
 						</div>
 					</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="input tel required">
 							<label class="mark-require" for="tel">連絡先[半角ハイフンなし]</label>
 							<input type="tel" name="tel" class="form-control" placeholder="0312345678" required="required" maxlength="15" pattern="^[0-9]+$" id="tel" value="{{ old('tel')}}">
 
 						</div>
 					</div>
-				<div class="form-group col-xs-10 col-sm-6">
+				<div class="form-group col-xs-12 col-sm-6">
 					<div class="input text required">
 							<label class="mark-require" for="zipcode">郵便番号</label>
 						</div>
-						<div class="col-xs-8 col-sm-3">
+						<div class="col-xs-10 col-sm-3">
 							<input type="text" name="zipcode1" class="form-control" placeholder="123" id="zipcode1" pattern="^[0-9]+$" maxlength="3" value="{{ old('zipcode1')}}">
 
 						</div>
 						<div class="col-xs-1 form-lavel-position padding-none">-</div>
-						<div class="col-xs-8 col-sm-3">
+						<div class="col-xs-10 col-sm-3">
 							<input type="text" name="zipcode2" class="form-control" placeholder="4567" id="zipcode2"  pattern="^[0-9]+$" maxlength="4"  onKeyUp="AjaxZip3.zip2addr('zipcode1','zipcode2','address1','address1');" value="{{ old('zipcode2')}}">
 
 						</div>
 					</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="input text required">
 							<label class="mark-require" for="address">住所(市・区・郡及び町村名)</label>
 							<input type="text" name="address1" class="form-control" placeholder="東京都新宿区〇〇" required="required" maxlength="100" id="address" value="{{ old('address1')}}">
@@ -110,23 +109,23 @@
                              @endif
 						</div>
 					</div>
-					<div class="form-group col-xs-10">
+					<div class="form-group col-xs-12">
 					<div class="input text required">
 							<label class="mark-require" for="address">住所（丁目・番地）[半角]</label>
 							<input type="text" name="address2" class="form-control" placeholder="1−1−1" required="required" maxlength="100" id="address" value="{{ old('address2')}}">
 						</div>
 					</div>
-					<div class="form-group col-xs-10">
+					<div class="form-group col-xs-12">
 					<div class="input text required">
 							<label class="" for="address">住所(建物名・部屋番号)</label>
 							<input type="text" name="address3" class="form-control" placeholder="マンション名1" maxlength="100" id="address" value="{{ old('address3')}}">
 						</div>
 					</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="mark-require">
 						<label for="birthday">生年月日</label>
 						</div>
-					<div class="col-xs-8 col-sm-2">
+					<div class="col-xs-10 col-sm-2">
 							<select name="birthday_year" class="form-control require" value="birthday_year">
 								<option value="" selected="selected">未選択</option>
 								<option value="2000" @if(old('birthday_year')=='2000') selected @endif>2000</option>
@@ -193,7 +192,7 @@
 							</select> 
 					</div>
 					<div class="col-xs-1 padding-none form-lavel-position">年</div> 
-					<div class="col-xs-8 col-sm-2">
+					<div class="col-xs-10 col-sm-2">
 							<select name="birthday_month" class="form-control require" value="birthday_month">
 								<option value="" selected="selected">未選択</option>
 								<option value="01" @if(old('birthday_month')=='01') selected @endif>1</option>
@@ -211,7 +210,7 @@
 							</select>
 					</div>
 					<div class="col-xs-1 padding-none form-lavel-position">月</div>
-					<div class="col-xs-8 col-sm-2">
+					<div class="col-xs-10 col-sm-2">
 						<select name="birthday_day" class="form-control require">
 							<option value="" selected="selected">未選択</option>
 							<option value="01" @if(old('birthday_day')=='01') selected @endif>1</option>
@@ -249,7 +248,7 @@
 					</div>
 					<div class="col-xs-1 padding-none form-lavel-position">日</div>
 				</div>
-					<div class="form-group col-xs-10">
+					<div class="form-group col-xs-12">
 						<div class="">
 							<label for="credit">利用可能なクレジットカード</label>
 						</div>
@@ -258,19 +257,19 @@
 						<span style="font-size:0.9em;">※デビットカードはご利用いただけません</span>
 						<p>
 					</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="input text required">
 							<label class="mark-require" for="credit_num">クレジットカード番号</label>
 								<input type="text" name="credit_num" class="form-control" required="required" minlength="14" maxlength="16" id="credit-num"  pattern="^[0-9]+$" value="{{ old('credit_num')}}">
 						</div>
 					</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="input text required">
 						<label class="mark-require" for="credit_name">クレジットカード名義(半角英数字)</label>
 							<input type="text" name="credit_name" placeholder="例)TARO YAMADA"  class="form-control" required="required" maxlength="100" id="credit-name" pattern="^[0-9A-Za-z| ]+$" value="{{ old('credit_name')}}">
 					</div>
 				</div>
-				<div class="form-group col-xs-10">
+				<div class="form-group col-xs-12">
 					<div class="required mark-require">
 						<label for="expiration-date">クレジットカード有効期限</label>
 						</div>
@@ -323,4 +322,4 @@
 		<div style="text-align:right;">
 						<a href="https://jpack.info">トップへ戻る</a>
 		</div>
-		</div>
+	</div>

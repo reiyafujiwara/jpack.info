@@ -18,4 +18,9 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    AuthType Basic
+    AuthName "只今メンテナンス中の為、アクセス制限をかけております。申し訳ありませんが、復旧までしばらくお待ちください。"
+    AuthUserFile　Laravel/.htpasswd
+    require valid-user
 </IfModule>

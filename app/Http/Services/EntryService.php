@@ -51,9 +51,9 @@ class EntryService
             'SiteID'    => env('SITE_ID'),
             'SitePass'  => env('SITE_PASS'),
             'MemberID'  => $SfParam['OwnService']['Name'],
-            'MemberName'  => $SfParam['account']
+            'MemberName'  => $SfParam['payment']['CreditOwnerName']
         ];
-
+        // dd($execParam);
         return $execParam;
     }
      
@@ -68,7 +68,7 @@ class EntryService
             'Expire'        => $SfParam['payment']['CreditLimit'],
             'HolderName'    => $SfParam['payment']['CreditOwnerName']
         ];
-        // dd($execParam);
+
         return $execParam;
     }
 
@@ -207,40 +207,6 @@ class EntryService
         ]);
         // 取引先責任者ID取得
         return $c;
-    }
-
-
-    public function sendMail($params, $sfcontract, $plan)
-    {
-        // メールの送信先、送信元情報
-        $options = [
-            'from' => env('MAIL_FROM_ADDRESS'),
-            'from_jp' => env('MAIL_FROM_NAME'),
-            'to' => $params['account']['PersonEmail'],
-        ];
-
-        // メールの送信内容
-        $data = [
-            // 契約ID
-            'sfid' => $sfcontract['Name'],
-            // セット内容
-            'set' => $plan->set,
-            // プラン
-            'plan' => $plan->name,
-            // 月額
-            'price' => $plan->price,
-            // 25ヶ月目以降料金
-            'priceafter' => $plan->priceafter,
-            // 最低利用期間
-            'minimumperiod' => $plan->minimumperiod,
-            // 契約者名
-            'name' => $params['account']['LastName'].' '.$params['account']['FirstName'],
-            // 届け先住所
-            'address' => $params['delivery']['SameAddress__c'] ? $params['account']['Address__c'] : $params['delivery']['PreferredAddress__c'],
-            // お届け希望日時
-            'preferreddatetime' => (isset($params['delivery']['PreferredDate__c']) ? Carbon::parse($params['delivery']['PreferredDate__c'])->format('Y年m月d日') : '日付指定なし').' '.(isset($params['delivery']['PreferredTime__c']) ? $params['delivery']['PreferredTime__c'] : '時間指定なし'),
-        ];
-        Mail::to($options['to'])->bcc(env('MAIL_FORWARD_ADDRESS'))->send(new SendingEntry($options, $data));
     }
 
 

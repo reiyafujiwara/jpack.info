@@ -39,12 +39,6 @@ class EntryController extends Controller
       * バリデーションを通過したら入力内容確認画面へ遷移
       *
       */
-
-     
-    // public function input_check(Request $request){
-    //     $data = $request->all();
-    //     return view('entryform.confirm')->with($data);
-    //     }
     
     
     public function confirm(Request $request){
@@ -56,11 +50,11 @@ class EntryController extends Controller
                 'kana1' => 'required|regex:/^[ァ-ヶー]+$/u',
                 'kana2' => 'required|regex:/^[ァ-ヶー]+$/u',
                 'sex' => 'required',
-                'tel' => 'required|regex:/^\d{11}$/',
+                'tel' => 'required|regex:/^(0{1}\d{9,10})$/',
                 'zipcode1' => 'required|regex:/^\d{3}$/',
                 'zipcode2' => 'required|regex:/^\d{4}$/',
                 'address1' => 'required',
-                'address2' => 'required',
+                'address2' => 'required|regex:/^[0-9\-]+$/',
                 'address3' => '',
                 'birthday_year' => 'required',
                 'birthday_month' => 'required',
@@ -87,13 +81,14 @@ class EntryController extends Controller
                 'zipcode2.regex' => '郵便番号右枠は半角の4桁で入力して下さい。',
                 'address1.required' => '住所(市・区・郡及び町村名)を入力して下さい。',
                 'address2.required' => '住所（丁目・番地）を入力して下さい。',
+                'address2.regex' => '住所（丁目・番地）は半角数字で入力してください。',
                 'birthday_year.required' => '生年月日(年)を入力して下さい。',
                 'birthday_month.required' => '生年月日(月)を入力して下さい。',
                 'birthday_day.required' => '生年月日(日)を入力して下さい。',
                 'credit_num.required' => 'クレジットカード番号を入力して下さい。',
                 'credit_num.digits_between' => 'クレジットカード番号の桁数は正しく入力して下さい。',
                 'credit_name.required' => 'クレジットカード名義を入力して下さい。',
-                'credit_name.regex' => 'クレジットカード名義は半角英数字で入力して下さい。',
+                'credit_name.regex' => 'クレジットカード名義は半角英数大文字で入力して下さい。',
                 'expiration_date_month.required' => 'クレジットカード有効期限(月)を入力して下さい。',
                 'expiration_date_year.required' => 'クレジットカード有効期限(年)を入力して下さい。'
             ],[
@@ -139,8 +134,6 @@ class EntryController extends Controller
       * 
       *
       */
-    
-
 
     public function store (Request $request){
     // 確認画面で戻るボタンが押された場合
@@ -177,53 +170,6 @@ class EntryController extends Controller
         }
     }
 
-
-
-        // // SF：顧客作成
-        // // account contract payment delivery
-        // $params = $this->entryService->generateSfParams($request->all());
-        // // dd($params); 処理確認OK
-        // $account        = $this->entryService->createSfAccount($params['account']);
-        // // dd($account); //0015D00000NFweSQAT
-        
-        // // SF：取引先から取引先責任者のIDの取得
-        // $contact_id     = $this->entryService->getSfContactId($account['id'], $params);
-        // // dd($contact_id);
-        // // GMO：会員登録用パラメータ作成
-        // // dd($params);
-        // $member_param   = ($params['payment']['CreditOwnerName__c']);
-        // // dd($member_param); generateSaveMemberParamのMemberIDとMemberNameを直接指定で値格納確認
-
-        // // GMO：会員登録
-        // $member_id      = $this->entryService->gmoSaveMember($member_param);
-
-        // if($member_id !== false){
-        //     // GMO：会員にカード番号
-        //     $save_param     = $this->entryService->generateSaveCardParam($member_id,$params['payment']);
-        //     // dd($save_param);
-        //     $card_save      = $this->entryService->gmoSaveCard($save_param);
-        //     // dd($card_save);
-        //     if(!isset($card_save['ErrCode'])){
-        //         $pay = [
-        //           'CardSeq__c'        => $card_save['CardSeq'],
-        //           'GmoId__c'          => $member_id,
-        //           'PaymentType__c'    => 'クレジットカード',
-        //           'Contact__c'        => $contact_id
-        //         ];
-
-        //         // カードをGMOへ登録し、登録IDを取得
-
-        //         $this->entryService->createSfPayment($pay);
-        //         $params['contract']['Contact__c'] = $contact_id;
-
-        //         // ↓contactのことになります
-        //         // $params['delivery']['Delivery__c'] = $contact_id;
-        //         $sfparams = $this->entryService->createSfContract($params['contract']);
-
-
-        //          return view('entryform.thanks');
-        //         }
-        //     }
 
 }
 
