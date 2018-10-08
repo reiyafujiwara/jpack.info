@@ -5,6 +5,8 @@
 
 </head>
 
+
+
 @section('content')
 	<div class="container clearfix">
 	
@@ -40,9 +42,8 @@
 				<input type="hidden" name="type" value="Jボックス">
 				<input type="hidden" name="confirming" value="{{ old('confirming', 'false') }}")>
 				<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-			<input type="hidden" name="OrderID" value="{{$OrderID}}">
-				<input type="hidden" name="Amount" value="{{$Amount}}">
-				<input type="hidden" name="Tax" value="{{$Tax}}">
+				<input type="hidden" name="OrderID" value="{{$OrderID}}">
+
 
 				<div class="form-group col-xs-12">
 					<div class="input text required">
@@ -74,8 +75,9 @@
 				<div class="form-group col-xs-12 col-sm-6">
 					<div class="input select required "><label class="mark-require" for="sex">性別</label>
 							<select name="sex" between="<div class=&quot;form-group col-xs-10&quot;>" class="form-control" required="required" id="sex">
-								<option value="男性">男性</option>
-								<option value="女性">女性</option>
+								<option value="" selected="selected">未選択</option>
+								<option value="男性" @if(old('sex')=='男性') selected @endif>男性</option>
+								<option value="女性" @if(old('sex')=='女性') selected @endif>女性</option>
 							</select>
 						</div>
 					</div>
@@ -273,7 +275,7 @@
 					<div class="required mark-require">
 						<label for="expiration-date">クレジットカード有効期限</label>
 						</div>
-					<div class="col-xs-2">
+					<div class="col-xs-10 col-sm-2">
 							<select name="expiration_date_month" class="form-control">
 								<option value="" selected="selected">未選択</option>
 								<option value="01" @if(old('expiration_date_month')=='01') selected @endif>01</option>
@@ -293,7 +295,7 @@
 					<div class="col-xs-1 padding-none form-lavel-position">
 						月
 					</div>
-					<div class="col-xs-2">
+					<div class="col-xs-10 col-sm-2">
 					   <select name="expiration_date_year" class="form-control">
 							<option value="" selected="selected">未選択</option>
 							<option value="28" @if(old('expiration_date_year')=='28') selected @endif>28</option>
@@ -313,7 +315,7 @@
 						年
 					</div>
 				</div>
-				<div class="form-group col-sm-6 col-sm-offset-3">
+				<div class="form-group col-xs-6 col-xs-offset-3" style="overflow:hidden;">
 					<button class="btn btn-design submit" type="submit">登録する</button> 
 				</div>
 			</form>

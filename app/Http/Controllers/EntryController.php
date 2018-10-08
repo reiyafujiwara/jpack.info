@@ -8,6 +8,7 @@ use App\Http\Services\EntryService;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Forrest;
+use App\Mail\EntryMail;
 
 
 class EntryController extends Controller
@@ -20,9 +21,8 @@ class EntryController extends Controller
     public function create ()
     {
         $OrderID = date('Ymd').str_random(8);
-        $Amount  = 2300;
-        $Tax     = 0.08;
-        return view('entryform.entryform',compact('OrderID','Amount','Tax'));
+ 
+        return view('entryform.entryform',compact('OrderID'));
     }
 
     /**
@@ -122,10 +122,18 @@ class EntryController extends Controller
             // チェック実行パラメータ作成
             $execParam = $this->entryService->generateExecParam($params, $res);
             $resp = $this->entryService->gmoExec($execParam);
+            // dd($res,$resp);
+            if(!isset($resp['ErrCode'])){
+                return view('entryform.confirm')->with($params);
+            }else{
+                return view('entryform.Alert');
+            }
+
+            }
+
+                
             
-        }
-        return view('entryform.confirm')->with($params);
-    }
+        }   
 
 
     /**
@@ -163,8 +171,7 @@ class EntryController extends Controller
             // dd($SfParam);
             $OptionParam = $this->entryService->createSfOwnService($SfParam);
 
-        // dd($member_param);
-
+            // \Mail::to('ex.1021reiya@gmail.com')->send(new EntryMail($SfParam));
 
             return view('entryform.thanks');
         }

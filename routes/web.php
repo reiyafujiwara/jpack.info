@@ -26,32 +26,32 @@ Route::get('/', function () {
 
 // 申し込みページ
 # 入力画面
-Route::get('contact/', [
+Route::get('/contact/', [
     'uses' => 'EntryController@create',
     'as' => 'entryform.entryform'
   ]);
    
 # 確認画面
-Route::post('contact/confirm', [
+Route::post('/contact/confirm', [
     'uses' => 'EntryController@confirm',
     'as' => 'entryform.confirm'
   ]);
 
 
 # サンクスページ
-Route::post('contact/confirm/thanks', [
+Route::post('/contact/confirm/thanks', [
     'uses' => 'EntryController@store',
     'as' => 'entryform.thanks'
   ]);
 
 
 // サービス紹介ページ
-Route::get('/service', function() {
+Route::get('service', function() {
     return view('service');
 });
 
 // 特定商取引法に基づく表記
-Route::get('/asct', function() {
+Route::get('asct', function() {
     return view('asct');
 });
 

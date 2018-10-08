@@ -8,12 +8,12 @@
         <title>Jボックス</title>
 
 
-        <link href="/favicon.ico" type="image/x-icon" rel="icon">
-		<link href="/favicon.ico" type="image/x-icon" rel="shortcut icon">
+        <link href="favicon.ico" type="image/x-icon" rel="icon">
+		<link href="favicon.ico" type="image/x-icon" rel="shortcut icon">
 		<link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
 		<link rel="stylesheet" href="/css/style.css">
 		<link rel="stylesheet" href="/css/featherlight.min.css">
-		<link href="/css/entryform.css" rel="stylesheet">
+		<link href="css/entryform.css" rel="stylesheet">
     		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap/bootstrap.min.js"></script>	
 		<script src="js/featherlight.min.js"></script>

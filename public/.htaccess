@@ -1,26 +1,17 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
-    RewriteEngine On
-
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # Handle Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-
-    AuthType Basic
-    AuthName "只今メンテナンス中の為、アクセス制限をかけております。申し訳ありませんが、復旧までしばらくお待ちください。"
-    AuthUserFile　Laravel/.htpasswd
-    require valid-user
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^(.*)$ index.php/$1 [QSA,NS,L]
+RewriteRule ^ index.php [QSA,L]
 </IfModule>
+
+<Files ~ "^\.ht">
+	Order allow,deny
+	Deny from all
+	Satisfy All
+</Files>
+

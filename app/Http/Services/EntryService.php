@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Forrest;
 use Excepsion;
-use App\Mail\SendingEntry;
+use App\Mail\EntryMail;
 use Mail;
 use Carbon\Carbon;
 
@@ -23,8 +23,6 @@ class EntryService
             'ShopPass'  => env('SHOP_PASS'),
             'OrderID'   => $params['OrderID'], //日付（yyyymmdd）+ランダム英数字8桁のIDを付与
             'JobCd'     => 'CHECK', //有効性チェック
-            'Amount'    => $params['Amount'],
-            'Tax'       => $params['Amount'] * $params['Tax']
         ];
         // dd($param);
         return $param;
@@ -38,7 +36,7 @@ class EntryService
             'AccessID'      => $param['AccessID'],
             'AccessPass'    => $param['AccessPass'],
             'CardNo'        => $data['credit_num'],
-            'Expire'        => $data['expiration_date_month'].$data['expiration_date_year'],
+            'Expire'        => $data['expiration_date_year'].$data['expiration_date_month'],
             'OrderID'       => $param['OrderID']
         ];
         return $execParam;
@@ -152,15 +150,16 @@ class EntryService
          ];
 
          $OwnService = [
-             'EntryDate__c' => date('Y-m-d'),
-             'Order_ID__c' => $SfParam['OrderID'],
-             'Name' => uniqid("JBOX_"),
-             'Option_name__c' => 'Jボックス'
+             'EntryDate__c'     => date('Y-m-d'),
+             'Member_name__c'   => $SfParam['credit_name'],
+             'Name'             => uniqid("JBOX_"),
+             'Option_name__c'   => 'Jボックス'
          ];
 
+         
          $payment = [
             "CreditCardNumber"   => $SfParam["credit_num"],
-            "CreditLimit"   => $SfParam['expiration_date_month'].$SfParam['expiration_date_year'],
+            "CreditLimit"        => $SfParam['expiration_date_year'].$SfParam['expiration_date_month'],
             "CreditOwnerName"    => $SfParam["credit_name"],
         ];
 
@@ -174,14 +173,14 @@ class EntryService
      * @description
      * @return account_id
      */
-    public function createSfAccount($SfSfParam){
+    public function createSfAccount($SfParam){
         // dd($SfSfParam);
         Forrest::authenticate();
-        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$SfSfParam['LastName']."'AND Phone1__c='".$SfSfParam['Phone1__c']."'");
+        $a = Forrest::query("SELECT Id FROM Account WHERE LastName='".$SfParam['LastName']."'AND Phone1__c='".$SfParam['Phone1__c']."'");
         if($a['totalSize'] === 0){
             $a = Forrest::sobjects('Account',[
               'method' => 'post',
-              'body'   => $SfSfParam
+              'body'   => $SfParam
             ]);
             return $a;
         }
@@ -199,6 +198,7 @@ class EntryService
     }
     
     public function createSfOwnservice($SfParam){
+        // dd($SfParam['OwnService']);
         Forrest::authenticate();
 
         $c = Forrest::sobjects('OwnServices__c',[

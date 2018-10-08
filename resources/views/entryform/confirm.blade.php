@@ -16,8 +16,6 @@
 <form action="{{ route('entryform.thanks') }}" method="post" class="form-horizontal">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
   <input type="hidden" name="OrderID" value="{{$OrderID}}">
-  <input type="hidden" name="Amount" value="{{$Amount}}">
-  <input type="hidden" name="Tax" value="{{$Tax}}">
   <input type="hidden" name="name1" value="{{$name1}}">
   <input type="hidden" name="name2" value="{{$name2}}">
   <input type="hidden" name="kana1" value="{{$kana1}}">
@@ -40,7 +38,7 @@
  
   <div class="table-responsive">
     <div class="row">
-        <div class="col-xs-8 col-xs-offset-2 text-center entry_status">
+        <div class="col-xs-10 col-xs-offset-1 text-center entry_status">
             <p>入力画面 -> <span class="label label-danger">確認画面</span> -> 完了画面</p>
         </div>
     </div>
@@ -63,43 +61,43 @@
       </thead>
       <tbody>
         <tr>
-            <th class="col-xs-3 text-right">名前：</th>
+            <th class="col-xs-5 text-right">名前：</th>
             <td>{{$name1}}{{$name2}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">フリガナ：</th>
+          <th class="col-xs-5 text-right">フリガナ：</th>
           <td>{{$kana1}}{{$kana2}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">性別：</th>
+          <th class="col-xs-5 text-right">性別：</th>
           <td>{{$sex}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">電話番号：</th>
+          <th class="col-xs-5 text-right">電話番号：</th>
           <td>{{$tel}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">郵便番号：</th>
+          <th class="col-xs-5 text-right">郵便番号：</th>
           <td>{{$zipcode1}}-{{$zipcode2}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">住所：</th>
+          <th class="col-xs-5 text-right">住所：</th>
           <td>{{$address1}}{{$address2}}{{$address3}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">生年月日：</th>
+          <th class="col-xs-5 text-right">生年月日：</th>
           <td>{{$birthday_year}}年{{$birthday_month}}月{{$birthday_day}}日</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">クレジットカード番号：</th>
+          <th class="col-xs-5 text-right">クレジットカード番号：</th>
           <td>{{$credit_num}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">クレジットカード名義：</th>
+          <th class="col-xs-5 text-right">クレジットカード名義：</th>
           <td>{{$credit_name}}</td>
         </tr>
         <tr>
-          <th class="col-xs-3 text-right">クレジットカード有効期限：</th>
+          <th class="col-xs-5 text-right">クレジットカード有効期限：</th>
           <td>{{$expiration_date_month}}月/{{$expiration_date_year}}年</td>
         </tr>
       </tbody>
@@ -107,8 +105,8 @@
   </div>
       <div class="row">
           <div class="col-xs-10 col-xs-offset-1">
-            <input type="submit" name="action" value="入力画面に戻る" class="btn btn-warning btn-wide btn-lg pull-left col-xs-2"/>
-            <input type="submit" name="action" value="登録する" class="btn btn-primary btn-wide btn-lg pull-right col-xs-2"/>
+            <input type="submit" name="action" value="入力画面に戻る" class="btn btn-warning btn-wide btn-lg pull-left col-xs-4"/>
+            <input type="submit" name="action" value="登録する" class="btn btn-primary btn-wide btn-lg pull-right col-xs-4"/>
           </div>
         </div>
     </div>

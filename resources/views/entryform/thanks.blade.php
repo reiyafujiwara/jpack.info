@@ -8,7 +8,7 @@
                 <h2>Jボックスお申込完了</h2>
             </div>
 
-            <div class="col-xs-8 col-xs-offset-2 text-center entry_status">
+            <div class="col-xs-10 col-xs-offset-1 text-center entry_status">
                 
                 <p>入力画面 -> 確認画面　-><span class="label label-danger">完了画面</span>  </p>
             </div>
