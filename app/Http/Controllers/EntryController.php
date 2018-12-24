@@ -60,7 +60,7 @@ class EntryController extends Controller
                 'birthday_month' => 'required',
                 'birthday_day' => 'required',
                 'credit_num' => 'required|digits_between:15,16',
-                'credit_name' => 'required|regex:/^[A-Z]+$/',
+                'credit_name' => 'required|regex:/^[A-Z]+\s[A-Z]+\z/',
                 'expiration_date_month' => 'required',
                 'expiration_date_year' => 'required'
             ],[
@@ -82,6 +82,7 @@ class EntryController extends Controller
                 'address1.required' => '住所(市・区・郡及び町村名)を入力して下さい。',
                 'address2.required' => '住所（丁目・番地）を入力して下さい。',
                 'address2.regex' => '住所（丁目・番地）は半角数字で入力してください。',
+                'address3.regex' => '住所（建物名・部屋番号)の英数は半角で入力してください。',
                 'birthday_year.required' => '生年月日(年)を入力して下さい。',
                 'birthday_month.required' => '生年月日(月)を入力して下さい。',
                 'birthday_day.required' => '生年月日(日)を入力して下さい。',
@@ -112,6 +113,7 @@ class EntryController extends Controller
                 'expiration_date_year' => 'クレジットカード有効期限(年)'
             ]);
             $params = $request->all();
+            // dd($params);
             // 有効性チェックは無し、カード情報登録を行うときにも走るため、短時間で複数チェックを走らせるとカード会社に不正アクセスとみなされる可能性が高い
             // gmo取引登録
             $entryParam = $this->entryService->generateEntryParam($params);

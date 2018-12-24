@@ -43,6 +43,7 @@
 				<input type="hidden" name="confirming" value="{{ old('confirming', 'false') }}")>
 				<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 				<input type="hidden" name="OrderID" value="{{$OrderID}}">
+				
 
 
 				<div class="form-group col-xs-12">
@@ -276,7 +277,7 @@
 						<label for="expiration-date">クレジットカード有効期限</label>
 						</div>
 					<div class="col-xs-10 col-sm-2">
-							<select name="expiration_date_month" class="form-control">
+							<select name="expiration_date_month" id="expiration_date_month" class="form-control">
 								<option value="" selected="selected">未選択</option>
 								<option value="01" @if(old('expiration_date_month')=='01') selected @endif>01</option>
 								<option value="02" @if(old('expiration_date_month')=='02') selected @endif>02</option>
@@ -296,7 +297,7 @@
 						月
 					</div>
 					<div class="col-xs-10 col-sm-2">
-					   <select name="expiration_date_year" class="form-control">
+					   <select name="expiration_date_year" id="expiration_date_year" class="form-control">
 							<option value="" selected="selected">未選択</option>
 							<option value="28" @if(old('expiration_date_year')=='28') selected @endif>28</option>
 							<option value="27" @if(old('expiration_date_year')=='27') selected @endif>27</option>
@@ -316,7 +317,7 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-6 col-xs-offset-3" style="overflow:hidden;">
-					<button class="btn btn-design submit" type="submit">登録する</button> 
+					<button class="btn btn-design" type="submit">登録する</button> 
 				</div>
 			</form>
 		</div>

@@ -37,8 +37,11 @@ class EntryService
             'AccessPass'    => $param['AccessPass'],
             'CardNo'        => $data['credit_num'],
             'Expire'        => $data['expiration_date_year'].$data['expiration_date_month'],
-            'OrderID'       => $param['OrderID']
+            'OrderID'       => $param['OrderID'],
+            // 'Token'         => $param[''],
+            // 'TokenType'     => $param['']
         ];
+
         return $execParam;
 
     }
@@ -61,10 +64,11 @@ class EntryService
             'SiteID'        => env('SITE_ID'),
             'SitePass'      => env('SITE_PASS'),
             'MemberID'      => $member_id,
-            'DefaultFlag'    => 1,
+            'DefaultFlag'   => 1,
             'CardNo'        => $SfParam['payment']['CreditCardNumber'],
             'Expire'        => $SfParam['payment']['CreditLimit'],
             'HolderName'    => $SfParam['payment']['CreditOwnerName']
+            // 'Token'         => $param['']
         ];
 
         return $execParam;
@@ -82,7 +86,7 @@ class EntryService
             'form_params' => $param
         ]);
         parse_str($res->getBody(),$param);
-
+            // dd($param);
         return $param;
     }
 
@@ -95,6 +99,7 @@ class EntryService
             'form_params' => $param
         ]);
         parse_str($res->getBody(),$param);
+        // dd($res,$param);
         return $param;
     }
 
@@ -106,7 +111,7 @@ class EntryService
         $res = $client->request('post', $url, [
             'form_params' => $param
         ]);
-    
+            
         parse_str($res->getBody(),$param['err']);
 
         if (isset($param['err']['ErrCode']) && $param['err']['ErrInfo'] !== 'E01390010') {
@@ -152,7 +157,7 @@ class EntryService
          $OwnService = [
              'EntryDate__c'     => date('Y-m-d'),
              'Member_name__c'   => $SfParam['credit_name'],
-             'Name'             => uniqid("JBOX_"),
+             'Name'             => uniqid("JBOX"),
              'Option_name__c'   => 'Jボックス'
          ];
 
