@@ -42,7 +42,8 @@
 				<input type="hidden" name="type" value="Jボックス">
 				<input type="hidden" name="confirming" value="{{ old('confirming', 'false') }}")>
 				<input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-				<input type="hidden" name="OrderID" value="{{$OrderID}}">
+				{{-- <input type="hidden" name="OrderID" value="{{$OrderID}}"> --}}
+				<input type="hidden" name="credit_token" value="{{old('credit_token')}}">
 				
 
 

@@ -20,9 +20,9 @@ class EntryController extends Controller
 
     public function create ()
     {
-        $OrderID = date('Ymd').str_random(8);
+        // $OrderID = date('Ymd').str_random(8);
  
-        return view('entryform.entryform',compact('OrderID'));
+        return view('entryform.entryform');
     }
 
     /**
@@ -114,24 +114,25 @@ class EntryController extends Controller
             ]);
             $params = $request->all();
             // dd($params);
+            // dd($params);
             // 有効性チェックは無し、カード情報登録を行うときにも走るため、短時間で複数チェックを走らせるとカード会社に不正アクセスとみなされる可能性が高い
             // gmo取引登録
-            $entryParam = $this->entryService->generateEntryParam($params);
-            $res = $this->entryService->gmoEntry($entryParam);
-            if(!isset($res['ErrCode'])){
-            // gmo決済（有効性チェック)
-            $res['OrderID'] = $entryParam['OrderID'];
-            // チェック実行パラメータ作成
-            $execParam = $this->entryService->generateExecParam($params, $res);
-            $resp = $this->entryService->gmoExec($execParam);
-            // dd($res,$resp);
-            if(!isset($resp['ErrCode'])){
+            // $entryParam = $this->entryService->generateEntryParam($params);
+            // $res = $this->entryService->gmoEntry($entryParam);
+            // if(!isset($res['ErrCode'])){
+            // // gmo決済（有効性チェック)
+            // $res['OrderID'] = $entryParam['OrderID'];
+            // // チェック実行パラメータ作成
+            // $execParam = $this->entryService->generateExecParam($params, $res);
+            // $resp = $this->entryService->gmoExec($execParam);
+            // // dd($res,$resp);
+            // if(!isset($resp['ErrCode'])){
                 return view('entryform.confirm')->with($params);
-            }else{
-                return view('entryform.Alert');
-            }
+            // }else{
+            //     return view('entryform.Alert');
+            // }
 
-            }
+            // }
 
                 
             
@@ -155,24 +156,27 @@ class EntryController extends Controller
         }
 
         $SfParam = $this->entryService->generateSfParams($request->all());
+        // dd($SfParam);
         $SfAccount = $this->entryService->createSfAccount($SfParam['account']);
 
-        // dd($SfAccount);
+        // dd($SfAccount); 
         $contact_id     = $this->entryService->getSfContactId($SfAccount['id'],$SfParam);
+        // dd($contact_id); 
         $member_param = $this->entryService->generateSaveMemberParam($SfParam);
-
+        // dd($member_param);
         $member_id = $this->entryService->gmoSaveMember($member_param);
-
+        // dd($member_id);
         if($member_id !== false){
             $save_param     = $this->entryService->generateSaveCardParam($member_id,$SfParam);
-
+            // dd($save_param);
             $card_save      = $this->entryService->gmoSaveCard($save_param);
             // dd($card_save);
+            
 
             $SfParam['OwnService']['Contact__c'] = $contact_id;
             // dd($SfParam);
             $OptionParam = $this->entryService->createSfOwnService($SfParam);
-
+            // dd($OptionParam);
             // \Mail::to('ex.1021reiya@gmail.com')->send(new EntryMail($SfParam));
 
             return view('entryform.thanks');
@@ -181,6 +185,56 @@ class EntryController extends Controller
 
 
 }
+
+    // public function store (Request $request){
+    //     // 確認画面で戻るボタンが押された場合
+    //     if ($request->get('action') === '入力画面に戻る') {
+    //         // 入力画面へ戻る
+    //         return redirect()
+    //             ->route('entryform.entryform')
+    //             ->withInput($request->except(['action', 'Jボックス']));
+    //         }
+
+    //         $EntryParam = $this->entryService->generateEntryParams($request->all());
+    //         // dd($EntryParam);
+
+    //         $member_param = $this->entryService->generateSaveMemberParam($EntryParam);
+
+    //         $member_id = $this->entryService->gmoSaveMember($member_param);
+    //         // dd($member_id);
+    //         if($member_id == true){
+    //             $save_param     = $this->entryService->generateSaveCardParam($member_id,$EntryParam);
+
+    //             $card_save      = $this->entryService->gmoSaveCard($save_param);
+    //             // dd($card_save);
+                
+    //             if(isset($card_save['ErrCode'])){
+    //                 return view('entryform.Alert');
+    //             }else{
+    //                 $SfParam = $this->entryService->createSfAccount($EntryParam['Sfaccount']);
+    //                 // dd($SfParam);
+    //                 // 藤原礼也
+    //                 // 1回目　0015D00000QmJDXQA3
+    //                 // 2回目　0015D00000QmJDXQA3
+    //                 // 3回目　0015D00000QmJDXQA3
+
+    //                 // 田中太郎
+    //                 // 0015D00000QmJDmQAN
+    //                 $contact_id     = $this->entryService->getSfContactId($SfParam['id'],$EntryParam);
+    //                 // dd($contact_id);
+    //                 // 藤原礼也
+    //                 // 0035D00000uILJnQAO
+    //                 $EntryParam['SfOwnService']['Contact__c'] = $contact_id;
+    //                 // dd($EntryParam);
+    //                 $OptionParam = $this->entryService->createSfOwnService($EntryParam);
+    //                 // dd($OptionParam);
+    //                 // \Mail::to('ex.1021reiya@gmail.com')->send(new EntryMail($SfParam));
+    //                 return view('entryform.thanks');
+    //             }
+    //         }
+
+
+    // }
 
 
 

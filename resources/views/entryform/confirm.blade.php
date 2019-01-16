@@ -1,6 +1,7 @@
 @extends('layout')
 @section('title', 'Jボックス申込確認')
- 
+<script src="https://pt01.mul-pay.jp/ext/js/token.js" ></script>
+{{-- <script src="https://p01.mul-pay.jp/ext/js/token.js" ></script> --}}
 @section('content')
 <div class="container">
 
@@ -15,7 +16,7 @@
  
 <form action="{{ route('entryform.thanks') }}" method="post" class="form-horizontal">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
-  <input type="hidden" name="OrderID" value="{{$OrderID}}">
+  {{-- <input type="hidden" name="OrderID" value="{{$OrderID}}"> --}}
   <input type="hidden" name="name1" value="{{$name1}}">
   <input type="hidden" name="name2" value="{{$name2}}">
   <input type="hidden" name="kana1" value="{{$kana1}}">
@@ -34,6 +35,7 @@
   <input type="hidden" name="credit_name" value="{{$credit_name}}">
   <input type="hidden" name="expiration_date_month" value="{{$expiration_date_month}}">
   <input type="hidden" name="expiration_date_year" value="{{$expiration_date_year}}">
+  <input type="hidden" name="credit_token" id="credit_token" value="{{$credit_token}}">
 </div>
  
   <div class="table-responsive">
@@ -112,3 +114,31 @@
     </div>
   </div>
 </form>
+<script type="text/javascript">
+
+  window.onload = TokenIssue();
+
+    function TokenIssue(){
+        // console.log('ok')
+        Multipayment.init("tshop00033421");
+        // Multipayment.init("9100523834716");
+        Multipayment.getToken({
+            cardno : {{$credit_num}},
+            expire : {{$expiration_date_year}}{{$expiration_date_month}}
+        },TokenInput);
+        // console.log(Multipayment);
+
+    }
+      
+
+    function TokenInput(response){
+        // console.log(response.tokenObject.token);
+        document.getElementById("credit_token").value = response.tokenObject.token;
+        // window.alert(response);
+      
+    }
+
+
+
+
+  </script>
