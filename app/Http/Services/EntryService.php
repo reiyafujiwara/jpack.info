@@ -260,7 +260,7 @@ class EntryService
                 'method' => 'post',
                 'body'   => $SfParam['OwnService']
         ]);
-        // dd($c);
+        dd($c);
         // 取引先責任者ID取得
         return $c;
     }
